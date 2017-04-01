@@ -1,0 +1,23 @@
+{
+  "name": "site-plan-jungle",
+  "version": "0.0.1",
+  "description": "GUI for aiding the user in developing a detailed site plan for large Maker Faire.",
+  "main": "app.js",
+  "dependencies": {
+    "processing": "^0.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MakerFaireLA/sitePlanJungle.git"
+  },
+  "author": "Keith Matthews",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MakerFaireLA/sitePlanJungle/issues"
+  },
+  "homepage": "https://github.com/MakerFaireLA/sitePlanJungle#readme"
+}
