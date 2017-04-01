@@ -4,6 +4,8 @@
   "description": "GUI for aiding the user in developing a detailed site plan for large Maker Faire.",
   "main": "app.js",
   "dependencies": {
+    "express": "^4.15.2",
+    "mongodb": "^2.2.25",
     "processing": "^0.2.0"
   },
   "devDependencies": {},
