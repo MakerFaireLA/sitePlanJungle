@@ -6,7 +6,7 @@
   "dependencies": {
     "express": "^4.15.2",
     "mongodb": "^2.2.25",
-    "processing": "^0.2.0"
+    "p5": "^0.5.8"
   },
   "devDependencies": {},
   "scripts": {
