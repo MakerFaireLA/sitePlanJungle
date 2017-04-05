@@ -1,8 +1,11 @@
 {
   "name": "site-plan-jungle",
   "version": "0.0.1",
-  "description": "GUI for aiding the user in developing a detailed site plan for large Maker Faire.",
-  "main": "app.js",
+  "description": "GUI for aiding the user in developing a detailed site plan for a large Maker Faire.",
+  "main": "server.js",
+  "engines": {
+    "node": "6.9.2"
+  },
   "dependencies": {
     "express": "^4.15.2",
     "mongodb": "^2.2.25",
@@ -11,7 +14,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
