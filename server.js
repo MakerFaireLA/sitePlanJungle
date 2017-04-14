@@ -19,7 +19,6 @@ var options =
             }
     };
 
-
 app.get('/', function(request, response, next) {
     response.sendFile('index.html', options, function(err) {
         if(err) {
@@ -36,16 +35,6 @@ app.get('/sketch.js', function(request, response, next) {
             next(err);
         } else {
             console.log('Sent: sketch.js');
-        }
-    });
-});
-
-app.get('/socket.io.js', function(request, response, next) {
-    response.sendFile('socket.io.js', options, function(err) {
-        if(err) {
-            next(err);
-        } else {
-            console.log('Sent: socket.io.js');
         }
     });
 });
