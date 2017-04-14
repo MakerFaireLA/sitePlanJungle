@@ -1,4 +1,4 @@
-
+var env = require('node-env-file');
 var express = require('express');
 var app = express();
 
@@ -43,8 +43,9 @@ app.get('/sketch.js', function(request, response, next) {
 // WebSockets work with the HTTP Server
 //   Putting back the WebSockets method using instructions in
 //   http://stackoverflow.com/questions/21365044/cant-get-socket-io-js
-var server = app.listen(443, function() {
-    console.log('Server started on port 8080');
+var port = process.env.PORT || 8080;
+var server = app.listen(port, function() {
+    console.log('Server started on port' + port);
 });
 var io = require('socket.io').listen(server);
 

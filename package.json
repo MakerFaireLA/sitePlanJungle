@@ -9,6 +9,7 @@
   "dependencies": {
     "express": "^4.15.2",
     "mongodb": "^2.2.25",
+    "node-env-file": "^0.1.8",
     "p5": "^0.5.8",
     "socket.io": "^1.7.3"
   },
