@@ -43,7 +43,7 @@ app.get('/sketch.js', function(request, response, next) {
 // WebSockets work with the HTTP Server
 //   Putting back the WebSockets method using instructions in
 //   http://stackoverflow.com/questions/21365044/cant-get-socket-io-js
-var server = app.listen(8080, function() {
+var server = app.listen(443, function() {
     console.log('Server started on port 8080');
 });
 var io = require('socket.io').listen(server);
