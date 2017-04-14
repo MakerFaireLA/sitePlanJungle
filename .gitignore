@@ -1,4 +1,3 @@
 .DS_Store
 node_modules/
 .vscode/
-socket.io.js

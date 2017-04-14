@@ -1,57 +1,51 @@
 
-var http = require('http');
+var express = require('express');
+var app = express();
 
-var url = require('url');
-var path = require('path');
+// app.use(function(request, response, next) {
+//     console.log('middleware');
+//     request.testing = 'testing';
+//     return next();
+// });
 
-var fs = require('fs');
-
-var server = http.createServer(handleRequest);
-server.listen(8080);
-
-console.log('Server started on port 8080');
-
-function handleRequest(request, response) {
-    // What did we request?
-    var pathname = request.url;
-
-    // If blank let's ask for index.html
-    if(pathname == '/') {
-        pathname = '/index.html';
-    }
-
-    // Ok, what's our file extension?
-    var ext = path.extname(pathname);
-
-    // Map extension to file type
-    var typeExt = {
-        '.html': 'text/html',
-        '.js':   'text/javascript',
-        '.css':  'text/css'
+var options = 
+    {
+        root: __dirname,
+        dotfiles: 'deny',
+        headers: 
+            {
+                'x-timestamp': Date.now(),
+                'x-sent': true
+            }
     };
 
-    // What is it?  Default to plain text
-    var contentType = typeExt[ext] || 'text/plain';
-
-    // user file system module
-    fs.readFile(__dirname + pathname,
-        // Callback function for reading
-        function(err, data) {
-            // if there is an error
-            if(err) {
-                response.writeHead(500);
-                return response.end('Error loading ' + pathname);
-            }
-            // Otherwise, send the data, the contents of the file
-            response.writeHead(200);
-            response.end(data);
+app.get('/', function(request, response, next) {
+    response.sendFile('index.html', options, function(err) {
+        if(err) {
+            next(err);
+        } else {
+            console.log('Sent: index.html');
         }
-    );
-}
+    });
+});
 
+app.get('/sketch.js', function(request, response, next) {
+    response.sendFile('sketch.js', options, function(err) {
+        if(err) {
+            next(err);
+        } else {
+            console.log('Sent: sketch.js');
+        }
+    });
+});
 
 // WebSocket Portion
 // WebSockets work with the HTTP Server
+//   Putting back the WebSockets method using instructions in
+//   http://stackoverflow.com/questions/21365044/cant-get-socket-io-js
+var server = app.listen(8080, function() {
+    console.log('Server started on port 8080');
+});
 var io = require('socket.io').listen(server);
 
 
