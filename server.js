@@ -45,7 +45,7 @@ app.get('/sketch.js', function(request, response, next) {
 //   http://stackoverflow.com/questions/21365044/cant-get-socket-io-js
 var port = process.env.PORT || 8080;
 var server = app.listen(port, function() {
-    console.log('Server started on port' + port);
+    console.log('Server started on port ' + port);
 });
 var io = require('socket.io').listen(server);
 
