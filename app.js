@@ -1,46 +1,47 @@
-// Keep track of our socket connection
+
+// Establish socket connection to server
 var socket;
 
-// ===============================================
-function setup() {
-    createCanvas(windowWidth, windowHeight);
-    background(0);
-    // Start a socket connection to the server
-    // Someday we would run this server somewhere else
+
+window.onload = function() { 
+    var paper = new Raphael(document.getElementById('canvas_container'), 500, 500);
+
     socket = io.connect('/');
-    // We make a named event called 'mouse' and write an anonymous callback function
-    socket.on('mouse',
-        // When we receive data
+
+    // Create named event 'obj' and anonymous callback function to handle it
+    socket.on('obj',
+        // When we receive data simply print it to console for the moment
         function(data) {
             console.log("Got: " + data.x + " " + data.y);
-            // Draw a blue circle
-            fill(0, 0, 255);
-            noStroke();
-            ellipse(data.x, data.y, 80, 80);
         }
     );
+
+    var obj = paper.rect(210, 225, 80, 50);
+    obj.attr({fill: '#000', stroke: 'none', cursor: "move"});
+
+    function move(dx, dy) {
+        this.attr({x: this.ox + dx, y: this.oy + dy});
+    }
+
+    function start() {
+        this.ox = this.attr("x");
+        this.oy = this.attr("y");
+    }
+
+    function end() {
+        // report new final position to server
+        sendposition(this.attr("x"), this.attr("y"));
+    }
+
+    obj.drag(move, start, end);
 }
 
-// ===============================================
-function draw() {
-    // do nothing
-}
 
 // ===============================================
-function mouseDragged() {
-    // Draw some white circles
-    fill(255);
-    noStroke();
-    ellipse(mouseX, mouseY, 80, 80);
-    // Send the mouse coordinates
-    sendmouse(mouseX, mouseY);
-}
-
-// ===============================================
-// Function for sending to the socket
-function sendmouse(xpos, ypos) {
+// Function for sending through the socket
+function sendposition(xpos, ypos) {
     // We are sending!
-    console.log("sendmouse: " + xpos + " " + ypos);
+    console.log("sendpos: " + xpos + " " + ypos);
 
     // Make a little object with x and y
     var data = {
@@ -49,5 +50,5 @@ function sendmouse(xpos, ypos) {
     };
 
     // Send that object to the socket
-    socket.emit('mouse', data);
+    socket.emit('obj', data);
 }
