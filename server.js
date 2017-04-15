@@ -2,12 +2,6 @@ var env = require('node-env-file');
 var express = require('express');
 var app = express();
 
-// app.use(function(request, response, next) {
-//     console.log('middleware');
-//     request.testing = 'testing';
-//     return next();
-// });
-
 var options = 
     {
         root: __dirname,
@@ -29,12 +23,12 @@ app.get('/', function(request, response, next) {
     });
 });
 
-app.get('/sketch.js', function(request, response, next) {
-    response.sendFile('sketch.js', options, function(err) {
+app.get('/app.js', function(request, response, next) {
+    response.sendFile('app.js', options, function(err) {
         if(err) {
             next(err);
         } else {
-            console.log('Sent: sketch.js');
+            console.log('Sent: app.js');
         }
     });
 });
