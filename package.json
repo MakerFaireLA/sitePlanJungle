@@ -7,6 +7,7 @@
     "node": "6.9.2"
   },
   "dependencies": {
+    "dotenv": "^4.0.0",
     "express": "^4.15.2",
     "mongodb": "^2.2.25",
     "node-env-file": "^0.1.8",

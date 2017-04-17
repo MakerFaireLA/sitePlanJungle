@@ -2,6 +2,10 @@ var env = require('node-env-file');
 var express = require('express');
 var app = express();
 
+// https://medium.com/@rafaelvidaurre/managing-environment-variables-in-node-js-2cb45a55195f
+var dotenv = require('dotenv'); // for reading environment variables from a local .env file
+dotenv.load();
+
 var options = 
     {
         root: __dirname,
@@ -33,38 +37,52 @@ app.get('/app.js', function(request, response, next) {
     });
 });
 
-// WebSocket Portion
-// WebSockets work with the HTTP Server
-//   Putting back the WebSockets method using instructions in
-//   http://stackoverflow.com/questions/21365044/cant-get-socket-io-js
-var port = process.env.PORT || 8080;
-var server = app.listen(port, function() {
-    console.log('Server started on port ' + port);
-});
-var io = require('socket.io').listen(server);
+// Setup the database
+var MongoClient = require('mongodb').MongoClient;
+
+MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
+    if (err) throw err;
+
+    // WebSocket Portion
+    // WebSockets work with the HTTP Server
+    //   Putting back the WebSockets method using instructions in
+    //   http://stackoverflow.com/questions/21365044/cant-get-socket-io-js
+    var port = process.env.PORT || 8080;
+    var server = app.listen(port, function () {
+        console.log('Server started on port ' + port);
+    });
+    var io = require('socket.io').listen(server);
 
 
-// Register a callback function to run when we have an individual connection.
-// This is run for each individual user that connects.
-io.sockets.on('connection',
-    // We are given a websocket object in our function
-    function(socket) {
+    // Register a callback function to run when we have an individual connection.
+    // This is run for each individual user that connects.
+    io.sockets.on('connection', function (socket) {
         console.log("We have a new client: " + socket.id);
 
         // When this user emits, client side: socket.emit('otherevent', some data);
-        socket.on('obj',
-            function(data) {
-                // Data comes in as whatever was sent, including objects
-                console.log("Received: 'obj' " + data.x + " " + data.y);
-                // Send it to all other clients
-                socket.broadcast.emit('obj', data);
-                // This is a way to send to everyone, including sender
-                // io.sockets.emit('message', "this goes to everyone");
-            }
-        );
+        socket.on('obj', function (data) {
+            // Data comes in as whatever was sent, including objects
+            console.log("Received: 'obj' " + data.x + " " + data.y);
 
-        socket.on('disconnect', function() {
+            db.collection('testbed').updateOne(
+                { "name": "benevolent" },
+                {
+                    $set: {
+                        "location": {
+                            'x': data.x,
+                            'y': data.y
+                        }
+                    }
+                });
+
+            // Send it to all other clients
+            socket.broadcast.emit('obj', data);
+            // This is a way to send to everyone, including sender
+            // io.sockets.emit('message', "this goes to everyone");
+        });
+
+        socket.on('disconnect', function () {
             console.log("Client has disconnected");
         });
-    }    
-);
+    });
+});
