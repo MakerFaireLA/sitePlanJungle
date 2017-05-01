@@ -16,6 +16,8 @@ window.onload = function() {
         }
     );
 
+    var img = paper.image("http://i.imgur.com/L9uSTVr.png", 0, 0, 3024, 2160);
+
     var obj = paper.rect(210, 225, 80, 50);
     obj.attr({fill: '#000', stroke: 'none', cursor: "move"});
 
