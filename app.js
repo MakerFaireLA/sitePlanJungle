@@ -1,8 +1,6 @@
 
 // Establish socket connection to server
 var socket;
-var tiles = [];
-var selectedTile;
 
 window.onload = function() { 
     var paper = new Raphael(document.getElementById('canvas_container'), 500, 500);
@@ -19,36 +17,44 @@ window.onload = function() {
 
     var img = paper.image("http://i.imgur.com/L9uSTVr.png", 0, 0, 3024, 2160);
 
+    var tiles = [];
+    var focusTiles = {};
+
     // tile 0
     tiles.push(paper.rect(210, 200, 80, 50).attr({fill: '#000', 'fill-opacity': 0.5, stroke: 'none'}));
     tiles[0].node.onclick = function() {
-        stealSelection(0, selectedTile);
+        stealSelection(0, focusTiles, tiles);
     };
+
+    // select tile 0
+    tiles[0].attr({ stroke: '#802', 'stroke-width': 3, 'stroke-opacity': 0.5, cursor: 'move' });
+    // make tile 0 draggable
+    tiles[0].drag(ongoingDrag, onStartDrag, onEndDrag);
+    focusTiles.selectedTile = 0;
 
     // tile 1
     tiles.push(paper.rect(210, 265, 80, 50).attr({fill: '#000', 'fill-opacity': 0.5, stroke: 'none'}));
     tiles[1].node.onclick = function() {
-        stealSelection(1, selectedTile);
+        stealSelection(1, focusTiles, tiles);
     };
-
-    selectedTile = 0;
-    // stealSelection(0, selectedTile);
 }
 
 // ===============================================
 // OnClick callback making tiles draggable
-function stealSelection(thisTileNum, selectedTile) {
-    // remove highlight on previously selected tile
-    tiles[selectedTile].attr({ stroke: 'none', cursor: 'auto' });
-    // set undrag on previously selected tile
-    tiles[selectedTile].undrag();
+function stealSelection(thisTileNum, focusTiles, tiles) {
+    if(thisTileNum != focusTiles.selectedTile) {
+        // remove highlight on previously selected tile
+        tiles[focusTiles.selectedTile].attr({ stroke: 'none', cursor: 'auto' });
+        // set undrag on previously selected tile
+        tiles[focusTiles.selectedTile].undrag();
 
-    // highlight tile with red stroke
-    tiles[thisTileNum].attr({ stroke: '#802', 'stroke-width': 3, 'stroke-opacity': 0.5, cursor: 'move' });
-    // make tile draggable
-    tiles[thisTileNum].drag(ongoingDrag, onStartDrag, onEndDrag);
+        // highlight tile with red stroke
+        tiles[thisTileNum].attr({ stroke: '#802', 'stroke-width': 3, 'stroke-opacity': 0.5, cursor: 'move' });
+        // make tile draggable
+        tiles[thisTileNum].drag(ongoingDrag, onStartDrag, onEndDrag);
 
-    selectedTile = thisTileNum;
+        focusTiles.selectedTile = thisTileNum;
+    }
 }
 
 // ===============================================
