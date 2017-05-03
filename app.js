@@ -1,6 +1,7 @@
 
 // Establish socket connection to server
 var socket;
+var focusedTiles = {};
 
 window.onload = function() { 
     var paper = new Raphael(document.getElementById('canvas_container'), 500, 500);
@@ -18,7 +19,6 @@ window.onload = function() {
     var img = paper.image("http://i.imgur.com/L9uSTVr.png", 0, 0, 3024, 2160);
 
     var tiles = [];
-    var focusedTiles = {};
 
     // tile 0
     tiles.push(paper.rect(210, 200, 80, 50).attr({fill: '#000', 'fill-opacity': 0.5, stroke: 'none'}));
@@ -27,7 +27,7 @@ window.onload = function() {
     };
 
     // select tile 0
-    tiles[0].attr({ stroke: '#802', 'stroke-width': 3, 'stroke-opacity': 0.5, cursor: 'move' });
+    tiles[0].attr({ stroke: '#802', 'stroke-width': 3, 'stroke-opacity': 0.5, cursor: 'move'});
     // make tile 0 draggable
     tiles[0].drag(ongoingDrag, onStartDrag, onEndDrag);
     focusedTiles.selectedTile = 0;
@@ -70,17 +70,17 @@ function onStartDrag() {
 
 function onEndDrag() {
     // report new final position to server
-    sendPosition(this.attr("x"), this.attr("y"));
+    updateTilePosition(focusedTiles.selectedTile, this.attr("x"), this.attr("y"));
 }
 
 // ===============================================
 // Function for sending through the socket
-function sendPosition(xpos, ypos) {
-    // We are sending!
-    console.log("sendpos: " + xpos + " " + ypos);
+function updateTilePosition(id, xpos, ypos) {
+    console.log("send position: " + xpos + " " + ypos + " for tile number: " + id);
 
     // Make a little object with x and y
     var data = {
+        tile_id: id,
         x: xpos,
         y: ypos
     };

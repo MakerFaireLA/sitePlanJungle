@@ -62,10 +62,10 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
         // When this user emits, client side: socket.emit('otherevent', some data);
         socket.on('obj', function (data) {
             // Data comes in as whatever was sent, including objects
-            console.log("Received: 'obj' " + data.x + " " + data.y);
+            console.log("Received: 'obj' => tile_id " + data.tile_id + " at " + data.x + " " + data.y);
 
             db.collection('testbed').updateOne(
-                { "name": "benevolent" },
+                { "tile_id": data.tile_id },
                 {
                     $set: {
                         "location": {
