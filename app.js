@@ -1,16 +1,21 @@
-
-// Establish socket connection to server
+// ===============================================
+// Global variables
 var socket;
 var focusedTiles = {};
 
+// ===============================================
+// Main Routine 
 window.onload = function() { 
     var paper = new Raphael(document.getElementById('canvas_container'), 500, 500);
 
+    // Communication with the database takes place through this socket
     socket = io.connect('/');
 
     // Create named event 'obj' and anonymous callback function to handle it
     socket.on('obj',
         // When we receive data simply print it to console for the moment
+        // @TODO - as a debugging tool this is not terribly useful as it requires us to a. priori 
+        //   the structure of data.  Is there a var_dump or the log we could take advantage of instead?
         function(data) {
             console.log("Got: " + data.x + " " + data.y);
         }
@@ -74,7 +79,7 @@ function onEndDrag() {
 }
 
 // ===============================================
-// Function for sending through the socket
+// Send updated tile position through the socket back to the database
 function updateTilePosition(id, xpos, ypos) {
     console.log("send position: " + xpos + " " + ypos + " for tile number: " + id);
 
