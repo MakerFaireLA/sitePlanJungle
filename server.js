@@ -27,15 +27,7 @@ app.get('/', function(request, response, next) {
     });
 });
 
-app.get('/app.js', function(request, response, next) {
-    response.sendFile('app.js', options, function(err) {
-        if(err) {
-            next(err);
-        } else {
-            console.log('Sent: app.js');
-        }
-    });
-});
+app.use(express.static('public'));
 
 // Setup the database
 var MongoClient = require('mongodb').MongoClient
