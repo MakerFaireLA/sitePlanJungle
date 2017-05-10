@@ -38,7 +38,8 @@ app.get('/app.js', function(request, response, next) {
 });
 
 // Setup the database
-var MongoClient = require('mongodb').MongoClient;
+var MongoClient = require('mongodb').MongoClient
+    , assert = require('assert');
 
 MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
     if (err) throw err;
@@ -88,9 +89,16 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
         socket.on('server', function(message) {
             console.log("Received: 'server' => request for update of tile_id " + message.tile_id);
 
-            var loc = db.collection('testbed').findOne({ "tile_id": message.tile_id }).location;
-
-            updateTilePosition(socket, message.tile_id, 100, 100 + 50*message.tile_id);
+            db.collection('testbed').findOne({ 'tile_id': message.tile_id }, function(err, res) {
+                assert.equal(null, err);
+                // console.log("Retrieved from database res: " + res);
+                if(res != null) {
+                    updateTilePosition(socket, message.tile_id, res.location.x, res.location.y);
+                } else {
+                    console.log("ERROR: Received request for tile_id " + message.tile_id 
+                        + "; unable to pull match in database.");
+                }
+            });
         });
 
         // ------------------------------------------------
