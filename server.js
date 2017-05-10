@@ -54,15 +54,17 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
     var io = require('socket.io').listen(server);
 
 
+    // ===============================================
     // Register a callback function to run when we have an individual connection.
     // This is run for each individual user that connects.
     io.sockets.on('connection', function (socket) {
         console.log("We have a new client: " + socket.id);
 
-        // When this user emits, client side: socket.emit('otherevent', some data);
-        socket.on('obj', function (data) {
+        // ------------------------------------------------
+        // The broadcast channel is shared by all clients
+        socket.on('broadcast', function (data) {
             // Data comes in as whatever was sent, including objects
-            console.log("Received: 'obj' => tile_id " + data.tile_id + " at " + data.x + " " + data.y);
+            console.log("Received: 'broadcast' => tile_id " + data.tile_id + " at " + data.x + " " + data.y);
 
             db.collection('testbed').updateOne(
                 { "tile_id": data.tile_id },
@@ -76,13 +78,40 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
                 });
 
             // Send it to all other clients
-            socket.broadcast.emit('obj', data);
+            socket.broadcast.emit('broadcast', data);
             // This is a way to send to everyone, including sender
             // io.sockets.emit('message', "this goes to everyone");
         });
 
+        // ------------------------------------------------
+        // The server channel is for receiving requests from clients only
+        socket.on('server', function(message) {
+            console.log("Received: 'server' => request for update of tile_id " + message.tile_id);
+
+            var loc = db.collection('testbed').findOne({ "tile_id": message.tile_id }).location;
+
+            updateTilePosition(socket, message.tile_id, 100, 100 + 50*message.tile_id);
+        });
+
+        // ------------------------------------------------
         socket.on('disconnect', function () {
             console.log("Client has disconnected");
         });
     });
 });
+
+// ===============================================
+// Send updated tile position through the socket to the client
+function updateTilePosition(tunnel, id, xpos, ypos) {
+    console.log("Send position: " + xpos + " " + ypos + " for tile_id: " + id);
+
+    // Make a little object with x and y
+    var data = {
+        tile_id: id,
+        x: xpos,
+        y: ypos
+    };
+
+    // Send that object to the socket
+    tunnel.broadcast.emit('broadcast', data);
+}

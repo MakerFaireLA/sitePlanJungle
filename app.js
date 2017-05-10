@@ -11,16 +11,6 @@ window.onload = function() {
     // Communication with the database takes place through this socket
     socket = io.connect('/');
 
-    // Create named event 'obj' and anonymous callback function to handle it
-    socket.on('obj',
-        // When we receive data simply print it to console for the moment
-        // @TODO - as a debugging tool this is not terribly useful as it requires us to a. priori 
-        //   the structure of data.  Is there a var_dump or the log we could take advantage of instead?
-        function(data) {
-            console.log("Got: " + data.x + " " + data.y);
-        }
-    );
-
     var img = paper.image("http://i.imgur.com/L9uSTVr.png", 0, 0, 3024, 2160);
 
     var tiles = [];
@@ -30,6 +20,7 @@ window.onload = function() {
     tiles[0].node.onclick = function() {
         stealSelection(0, focusedTiles, tiles);
     };
+    requestTilePosition(0);
 
     // select tile 0
     tiles[0].attr({ stroke: '#802', 'stroke-width': 3, 'stroke-opacity': 0.5, cursor: 'move'});
@@ -42,6 +33,23 @@ window.onload = function() {
     tiles[1].node.onclick = function() {
         stealSelection(1, focusedTiles, tiles);
     };
+    requestTilePosition(1);
+
+    // tile 2
+    // Tile 2 is a just a button included to trigger various debugging related activities.
+    tiles.push(paper.rect(450, 450, 40, 40).attr({fill: '#005'}));
+    tiles[2].node.onclick = function() {
+        requestTilePosition(1);
+    };
+
+    // ------------------------------------
+    // We will receive (as well as send) tile location updates on the broadcast channel
+    // @TODO - Why is this never getting triggered?
+    socket.on('broadcast', function(data) {
+        console.log("Received: 'broadcast' => tile_id " + data.tile_id + " at " + data.x + " " + data.y);
+
+        tiles[data.tile_id].attr({ x: data.x, y: data.y });
+    });
 }
 
 // ===============================================
@@ -81,9 +89,8 @@ function onEndDrag() {
 // ===============================================
 // Send updated tile position through the socket back to the database
 function updateTilePosition(id, xpos, ypos) {
-    console.log("send position: " + xpos + " " + ypos + " for tile number: " + id);
+    console.log("Sending position: " + xpos + " " + ypos + " for tile number: " + id);
 
-    // Make a little object with x and y
     var data = {
         tile_id: id,
         x: xpos,
@@ -91,5 +98,17 @@ function updateTilePosition(id, xpos, ypos) {
     };
 
     // Send that object to the socket
-    socket.emit('obj', data);
+    socket.emit('broadcast', data);
+}
+
+// ===============================================
+// Send message on server channel requesting update of tile position
+function requestTilePosition(id) {
+    console.log("Sending: 'server' => requesting update of tile_id " + id);
+
+    var message = {
+        tile_id: id
+    };
+
+    socket.emit('server', message);
 }
