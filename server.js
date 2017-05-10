@@ -113,5 +113,5 @@ function updateTilePosition(tunnel, id, xpos, ypos) {
     };
 
     // Send that object to the socket
-    tunnel.broadcast.emit('broadcast', data);
+    tunnel.emit('broadcast', data);
 }
