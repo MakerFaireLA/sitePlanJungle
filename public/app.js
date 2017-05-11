@@ -35,20 +35,29 @@ window.onload = function() {
     };
     requestTilePosition(1);
 
-    // tile 2
-    // Tile 2 is a just a button included to trigger various debugging related activities.
-    tiles.push(paper.rect(450, 450, 40, 40).attr({fill: '#005'}));
-    tiles[2].node.onclick = function() {
+    // buttons
+    var button = [];
+    // A button included to trigger various debugging related activities.
+    button.push(paper.rect(450, 450, 40, 40).attr({fill: '#005'}));
+    button[0].node.onclick = function() {
         requestTilePosition(1);
     };
 
     // ------------------------------------
     // We will receive (as well as send) tile location updates on the broadcast channel
-    // @TODO - Why is this never getting triggered?
     socket.on('broadcast', function(data) {
         console.log("Received: 'broadcast' => tile_id " + data.tile_id + " at " + data.x + " " + data.y);
 
-        tiles[data.tile_id].attr({ x: data.x, y: data.y });
+        if(data.tile_id in tiles) {
+            // Tile is already in array; update the data for the tile.
+            tiles[data.tile_id].attr({ x: data.x, y: data.y });
+        } else {
+            // This is a new tile; add it at the specified location.
+            tiles.push(paper.rect(data.x, data.y, 80, 50).attr({fill: '#000', 'fill-opacity': 0.5, stroke: 'none'}));
+            tiles[data.tile_id].node.onclick = function() {
+                stealSelection(data.tile_id, focusedTiles, tiles);
+            };
+        }
     });
 }
 
