@@ -7,12 +7,8 @@ var focusedTiles = {};
 // Main Routine 
 window.onload = function() { 
     var paper = new Raphael(document.getElementById('canvas_container'), 500, 500);
-
-    // Communication with the database takes place through this socket
     socket = io.connect('/');
-
     var img = paper.image("http://i.imgur.com/L9uSTVr.png", 0, 0, 3024, 2160);
-
     var tiles = [];
 
     // tile 0
@@ -20,7 +16,7 @@ window.onload = function() {
     tiles[0].node.onclick = function() {
         stealSelection(0, focusedTiles, tiles);
     };
-    requestTilePosition(0);
+    // requestTilePosition(0);
 
     // select tile 0
     tiles[0].attr({ stroke: '#802', 'stroke-width': 3, 'stroke-opacity': 0.5, cursor: 'move'});
@@ -33,9 +29,12 @@ window.onload = function() {
     tiles[1].node.onclick = function() {
         stealSelection(1, focusedTiles, tiles);
     };
-    requestTilePosition(1);
+    // requestTilePosition(1);
 
-    // buttons
+    requestAllTiles();
+
+    // ------------------------------------
+    // Render buttons
     var button = [];
     // A button included to trigger various debugging related activities.
     button.push(paper.rect(450, 450, 40, 40).attr({fill: '#005'}));
@@ -120,4 +119,14 @@ function requestTilePosition(id) {
     };
 
     socket.emit('server', message);
+}
+
+// ===============================================
+// Send message on server channel requesting update on ALL tiles 
+function requestAllTiles() {
+    console.log("Sending: 'server' => requesting update on all tiles");
+
+    // Any message received by the server on the 'server' channel that lacks the 'tile_id' key
+    // will generate the full dump of all tile data.
+    socket.emit('server', {});
 }

@@ -79,18 +79,32 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
         // ------------------------------------------------
         // The server channel is for receiving requests from clients only
         socket.on('server', function(message) {
-            console.log("Received: 'server' => request for update of tile_id " + message.tile_id);
+            if("tile_id" in message) {
+                // This request is for update of a SINGLE tile location.
+                console.log("Received: 'server' => request for update of tile_id " + message.tile_id);
 
-            db.collection('testbed').findOne({ 'tile_id': message.tile_id }, function(err, res) {
-                assert.equal(null, err);
-                // console.log("Retrieved from database res: " + res);
-                if(res != null) {
-                    updateTilePosition(socket, message.tile_id, res.location.x, res.location.y);
-                } else {
-                    console.log("ERROR: Received request for tile_id " + message.tile_id 
-                        + "; unable to pull match in database.");
-                }
-            });
+                db.collection('testbed').findOne({ 'tile_id': message.tile_id }, function (err, res) {
+                    assert.equal(null, err);
+                    // console.log("Retrieved from database res: " + res);
+                    if (res != null) {
+                        updateTilePosition(socket, message.tile_id, res.location.x, res.location.y);
+                    } else {
+                        console.log("ERROR: Received request for tile_id " + message.tile_id
+                            + "; unable to pull match in database.");
+                    }
+                });
+            } else {
+                // This request is for update of ALL tile locations.
+                //   I.e. Any message that lacks the 'tile_id' key will generate this response.
+                console.log("Received: 'server' => request for update of all tiles.");
+
+                db.collection('testbed').find({ 'tile_id': {$exists: true}}).toArray(function(err, res) {
+                    assert.equal(null, err);
+                    for(var key in res) {
+                        updateTilePosition(socket, res[key].tile_id, res[key].location.x, res[key].location.y);
+                    }
+                });
+            }
         });
 
         // ------------------------------------------------
