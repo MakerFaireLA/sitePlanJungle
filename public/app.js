@@ -11,26 +11,6 @@ window.onload = function() {
     var img = paper.image("http://i.imgur.com/L9uSTVr.png", 0, 0, 3024, 2160);
     var tiles = [];
 
-    // tile 0
-    tiles.push(paper.rect(210, 200, 80, 50).attr({fill: '#000', 'fill-opacity': 0.5, stroke: 'none'}));
-    tiles[0].node.onclick = function() {
-        stealSelection(0, focusedTiles, tiles);
-    };
-    // requestTilePosition(0);
-
-    // select tile 0
-    tiles[0].attr({ stroke: '#802', 'stroke-width': 3, 'stroke-opacity': 0.5, cursor: 'move'});
-    // make tile 0 draggable
-    tiles[0].drag(ongoingDrag, onStartDrag, onEndDrag);
-    focusedTiles.selectedTile = 0;
-
-    // tile 1
-    tiles.push(paper.rect(210, 265, 80, 50).attr({fill: '#000', 'fill-opacity': 0.5, stroke: 'none'}));
-    tiles[1].node.onclick = function() {
-        stealSelection(1, focusedTiles, tiles);
-    };
-    // requestTilePosition(1);
-
     requestAllTiles();
 
     // ------------------------------------
@@ -56,6 +36,15 @@ window.onload = function() {
             tiles[data.tile_id].node.onclick = function() {
                 stealSelection(data.tile_id, focusedTiles, tiles);
             };
+
+            // If this is tile 0 we are inserting, then select it as well.
+            //    (JavaScript does force us to write ugly code, does it not?)
+            if( data.tile_id == 0) {
+                tiles[0].attr({ stroke: '#802', 'stroke-width': 3, 'stroke-opacity': 0.5, cursor: 'move' });
+                // make tile 0 draggable
+                tiles[0].drag(ongoingDrag, onStartDrag, onEndDrag);
+                focusedTiles.selectedTile = 0;
+            }
         }
     });
 }
