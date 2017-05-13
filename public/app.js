@@ -19,7 +19,7 @@ window.onload = function() {
     // A button included to trigger various debugging related activities.
     button.push(paper.rect(450, 450, 40, 40).attr({fill: '#005'}));
     button[0].node.onclick = function() {
-        requestTilePosition(1);
+        createNewTile(paper, tiles);
     };
 
     // ------------------------------------
@@ -95,8 +95,30 @@ function updateTilePosition(id, xpos, ypos) {
         y: ypos
     };
 
-    // Send that object to the socket
     socket.emit('broadcast', data);
+}
+
+// ===============================================
+// Create new tile with max+1 tile_id, render it on map, and report it to the server 
+//   for insertion in the database.
+function createNewTile(paper, tiles) {
+    
+    var data = {
+        op: 'c',
+        tile_id: Math.max(...tiles.keys())+1,
+        x: 250,
+        y: 250
+    };
+    // @TODO - allow user to select location where new tile will appear.
+
+    tiles[data.tile_id] = paper.rect(data.x, data.y, 80, 50).attr({fill: '#000', 'fill-opacity': 0.5, stroke: 'none'});
+    tiles[data.tile_id].node.onclick = function() {
+        stealSelection(data.tile_id, focusedTiles, tiles);
+    };
+    stealSelection(data.tile_id, focusedTiles, tiles);
+
+    socket.emit('broadcast', data);
+    // @TODO - prevent full rendering until confirmation of insertion in the database has been reported back.
 }
 
 // ===============================================
