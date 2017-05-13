@@ -50,30 +50,43 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
     // ===============================================
     // Register a callback function to run when we have an individual connection.
     // This is run for each individual user that connects.
-    io.sockets.on('connection', function (socket) {
+    io.sockets.on('connection', function(socket) {
         console.log("We have a new client: " + socket.id);
 
         // ------------------------------------------------
-        // The broadcast channel is shared by all clients
-        socket.on('broadcast', function (data) {
-            // Data comes in as whatever was sent, including objects
-            console.log("Received: 'broadcast' => tile_id " + data.tile_id + " at " + data.x + " " + data.y);
+        // Info sent on the 'broadcast' channel will be rebroadcast to all other clients
+        //   in order that all users remain in sync.
+        socket.on('broadcast', function(data) {
+            // 'broadcast' channel supports all CRUD operations
+            if(!('op' in data)) {
+                console.log("Error: 'broadcast' => data received with unspecified operation (no op found).");
+                // @TODO - Should probably throw an error here if the op param is not found in data.
+                // @TODO - Need to check that value of 'op' is 'c', 'r', 'u' or 'd' and if not, throw an error.
+                //     Or perhaps I should just use a switch statement and have the default throw an error.
+            } else if(data.op == 'u') {
+                // ------------------------------
+                // Update operation specified
+                console.log("Received: 'broadcast' => tile_id " + data.tile_id + " at " + data.x + " " + data.y);
 
-            db.collection('testbed').updateOne(
-                { "tile_id": data.tile_id },
-                {
-                    $set: {
-                        "location": {
-                            'x': data.x,
-                            'y': data.y
+                db.collection('testbed').updateOne(
+                    { "tile_id": data.tile_id },
+                    {
+                        $set: {
+                            "location": {
+                                'x': data.x,
+                                'y': data.y
+                            }
                         }
-                    }
-                });
-
-            // Send it to all other clients
-            socket.broadcast.emit('broadcast', data);
-            // This is a way to send to everyone, including sender
-            // io.sockets.emit('message', "this goes to everyone");
+                    }, function (err) {
+                        if (err) {
+                            console.log("Error: Unable to update database for tile_id " + data.tile_id);
+                            throw err;
+                        } else {
+                            // Send it to all other clients
+                            socket.broadcast.emit('broadcast', data);
+                        }
+                    });
+            }
         });
 
         // ------------------------------------------------

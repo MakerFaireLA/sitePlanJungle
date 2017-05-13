@@ -89,6 +89,7 @@ function updateTilePosition(id, xpos, ypos) {
     console.log("Sending position: " + xpos + " " + ypos + " for tile number: " + id);
 
     var data = {
+        op: 'u',
         tile_id: id,
         x: xpos,
         y: ypos
