@@ -65,8 +65,8 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
                 //     Or perhaps I should just use a switch statement and have the default throw an error.
             } else if(data.op == 'u') {
                 // ------------------------------
-                // Update operation specified
-                console.log("Received: 'broadcast' => tile_id " + data.tile_id + " at " + data.x + " " + data.y);
+                // Update operation implementation
+                console.log("Received: 'broadcast' => update tile_id " + data.tile_id + " to " + data.x + " " + data.y);
 
                 db.collection('testbed').updateOne(
                     { "tile_id": data.tile_id },
@@ -84,6 +84,23 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
                         } else {
                             // Send it to all other clients
                             socket.broadcast.emit('broadcast', data);
+                        }
+                    });
+            } else if(data.op == 'c') {
+                // ------------------------------
+                // Create operation implementation
+                console.log("Received: 'broadcast' => create tile_id " + data.tile_id + " at " + data.x + " " + data.y);
+
+                db.collection('testbed').insertOne(
+                    {'tile_id': data.tile_id, 'location':{'x': data.x, 'y':data.y}},
+                    function(err) {
+                        if(err) {
+                            console.log("Error: Unable to insert new tile in database for tile_id " + data.tile_id);
+                            throw err;
+                        } else {
+                            // Send it to all other clients
+                            // @TODO - But first I have to set up the client code to receive create messages.
+                            // socket.broadcast.emit('broadcast', data);
                         }
                     });
             }
