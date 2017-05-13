@@ -11,14 +11,16 @@ window.onload = function() {
     var img = paper.image("http://i.imgur.com/L9uSTVr.png", 0, 0, 3024, 2160);
     var tiles = [];
 
+    // ------------------------------------
+    // Load tiles from server
     requestAllTiles();
 
     // ------------------------------------
     // Render buttons
-    var button = [];
-    // A button included to trigger various debugging related activities.
-    button.push(paper.rect(450, 450, 40, 40).attr({fill: '#005'}));
-    button[0].node.onclick = function() {
+    var buttons = [];
+    // Create new tile button.
+    buttons.push(paper.rect(450, 450, 40, 40).attr({fill: '#005'}));
+    buttons[0].node.onclick = function() {
         createNewTile(paper, tiles);
     };
 
