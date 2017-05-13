@@ -25,29 +25,58 @@ window.onload = function() {
     };
 
     // ------------------------------------
-    // We will receive (as well as send) tile location updates on the broadcast channel
+    // 'broadcast' channel listener
+    //     supports all CRUD operations
     socket.on('broadcast', function(data) {
-        console.log("Received: 'broadcast' => tile_id " + data.tile_id + " at " + data.x + " " + data.y);
+        if (!('op' in data)) {
+            console.log("Error: 'broadcast' => data received with unspecified operation (no op found).");
+            // @TODO - Should probably throw an error here if the op param is not found in data.
+            // @TODO - Need to check that value of 'op' is 'c', 'r', 'u' or 'd' and if not, throw an error.
+            //     Or perhaps I should just use a switch statement and have the default throw an error.
 
-        if(data.tile_id in tiles) {
-            // Tile is already in array; update the data for the tile.
+        } else if(data.op == 'u') {
+            // ------------------------------
+            // Update operation implementation
+            console.log("Received: 'broadcast' => update tile_id " + data.tile_id + " to " + data.x + " " + data.y);
+
             tiles[data.tile_id].attr({ x: data.x, y: data.y });
-        } else {
-            // This is a new tile; add it at the specified location.
-            tiles.push(paper.rect(data.x, data.y, 80, 50).attr({fill: '#000', 'fill-opacity': 0.5, stroke: 'none'}));
+
+        } else if(data.op == 'c') {
+            // ------------------------------
+            // Create operation implementation
+            console.log("Received: 'broadcast' => create tile_id " + data.tile_id + " at " + data.x + " " + data.y);
+
+            tiles[data.tile_id] = paper.rect(data.x, data.y, 80, 50).attr({fill: '#000', 'fill-opacity': 0.5, stroke: 'none'});
             tiles[data.tile_id].node.onclick = function() {
                 stealSelection(data.tile_id, focusedTiles, tiles);
             };
 
-            // If this is tile 0 we are inserting, then select it as well.
-            //    (JavaScript does force us to write ugly code, does it not?)
+            // If this is tile 0 we are inserting, then assume we are on start-up and select it as well.
+            //  (Exactly one tile must always be selected.)
             if( data.tile_id == 0) {
                 tiles[0].attr({ stroke: '#802', 'stroke-width': 3, 'stroke-opacity': 0.5, cursor: 'move' });
                 // make tile 0 draggable
                 tiles[0].drag(ongoingDrag, onStartDrag, onEndDrag);
                 focusedTiles.selectedTile = 0;
             }
-        }
+
+        } else if(data.op == 'r') {
+            // ------------------------------
+            // Read operation implementation
+            //   Querying clients for tile locations is stupid.
+            console.log("Error: 'broadcast' => client queried for tile location.");
+
+            // do nothing
+
+        } else if(data.op == 'd') {
+            // ------------------------------
+            // Delete operation implementation
+            console.log("Received: 'broadcast' => delete tile_id " + data.tile_id);
+
+            // @TODO - does simply deleting the rectangle cause it to stop being rendered?
+            delete tiles[data.tile_id];
+
+        } // @TODO - else throw error
     });
 }
 
@@ -117,6 +146,7 @@ function createNewTile(paper, tiles) {
     tiles[data.tile_id].node.onclick = function() {
         stealSelection(data.tile_id, focusedTiles, tiles);
     };
+    // by default, select new tile
     stealSelection(data.tile_id, focusedTiles, tiles);
 
     socket.emit('broadcast', data);

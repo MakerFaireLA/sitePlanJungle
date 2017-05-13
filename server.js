@@ -57,12 +57,14 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
         // Info sent on the 'broadcast' channel will be rebroadcast to all other clients
         //   in order that all users remain in sync.
         socket.on('broadcast', function(data) {
-            // 'broadcast' channel supports all CRUD operations
+            // 'broadcast' channel listener
+            //     supports all CRUD operations (or will when I'm done)
             if(!('op' in data)) {
                 console.log("Error: 'broadcast' => data received with unspecified operation (no op found).");
                 // @TODO - Should probably throw an error here if the op param is not found in data.
                 // @TODO - Need to check that value of 'op' is 'c', 'r', 'u' or 'd' and if not, throw an error.
                 //     Or perhaps I should just use a switch statement and have the default throw an error.
+
             } else if(data.op == 'u') {
                 // ------------------------------
                 // Update operation implementation
@@ -86,6 +88,7 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
                             socket.broadcast.emit('broadcast', data);
                         }
                     });
+
             } else if(data.op == 'c') {
                 // ------------------------------
                 // Create operation implementation
@@ -99,8 +102,7 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
                             throw err;
                         } else {
                             // Send it to all other clients
-                            // @TODO - But first I have to set up the client code to receive create messages.
-                            // socket.broadcast.emit('broadcast', data);
+                            socket.broadcast.emit('broadcast', data);
                         }
                     });
             }
@@ -149,8 +151,8 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
 function updateTilePosition(tunnel, id, xpos, ypos) {
     console.log("Send position: " + xpos + " " + ypos + " for tile_id: " + id);
 
-    // Make a little object with x and y
     var data = {
+        op: 'u',
         tile_id: id,
         x: xpos,
         y: ypos
