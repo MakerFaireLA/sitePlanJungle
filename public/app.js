@@ -168,7 +168,7 @@ function requestTilePosition(id) {
 // ===============================================
 // Send message on server channel requesting update on ALL tiles 
 function requestAllTiles() {
-    console.log("Sending: 'server' => requesting update on all tiles");
+    console.log("Sending: 'server' => requesting initialization on all tiles");
 
     // Any message received by the server on the 'server' channel that lacks the 'tile_id' key
     // will generate the full dump of all tile data.
