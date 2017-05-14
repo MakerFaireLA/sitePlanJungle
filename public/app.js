@@ -154,18 +154,6 @@ function createNewTile(paper, tiles) {
 }
 
 // ===============================================
-// Send message on server channel requesting update of tile position
-function requestTilePosition(id) {
-    console.log("Sending: 'server' => requesting update of tile_id " + id);
-
-    var message = {
-        tile_id: id
-    };
-
-    socket.emit('server', message);
-}
-
-// ===============================================
 // Send message on server channel requesting update on ALL tiles 
 function requestAllTiles() {
     console.log("Sending: 'server' => requesting initialization on all tiles");
