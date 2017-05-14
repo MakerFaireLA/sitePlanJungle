@@ -58,7 +58,7 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
         //   in order that all users remain in sync.
         socket.on('broadcast', function(data) {
             // 'broadcast' channel listener
-            //     supports all CRUD operations (or will when I'm done)
+            //     supports all CRUD operations
             if(!('op' in data)) {
                 console.log("Error: 'broadcast' => data received with unspecified operation (no op found).");
                 // @TODO - Should probably throw an error here if the op param is not found in data.
@@ -103,6 +103,45 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
                         } else {
                             // Send it to all other clients
                             socket.broadcast.emit('broadcast', data);
+                        }
+                    });
+            } else if(data.op == 'd') {
+                // ------------------------------
+                // Delete operation implementation
+                console.log("Received: 'broadcast' => delete tile_id " + data.tile_id);
+
+                db.collection('testbed').deleteOne(
+                    {'tile_id': data.tile_id},
+                    function(err) {
+                        if(err) {
+                            console.log("Error: Failed to delete tile_id " + data.tile_id + " from database.");
+                            throw err;
+                        } else {
+                            // rebroadcast to all other clients
+                            socket.broadcast.emit('broadcast', data);
+                        }
+                    });
+
+            } else if(data.op == 'r') {
+                // ------------------------------
+                // Read operation implementation
+                console.log("Received: 'broadcast' => read tile_id " + data.tile_id);
+
+                db.collection('testbed').findOne(
+                    {'tile_id': data.tile_id},
+                    function(err, doc) {
+                        if(err) {
+                            console.log("Error: Read op failed to find tile_id " + data.tile_id + " in database.");
+                            throw err;
+                        } else {
+                            var update = {
+                                op: 'u',
+                                tile_id: data.tile_id,
+                                x: data.x,
+                                y: data.y,
+                            };
+
+                            socket.emit('broadcast', update);
                         }
                     });
             }
