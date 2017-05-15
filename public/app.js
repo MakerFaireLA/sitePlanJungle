@@ -48,7 +48,7 @@ window.onload = function() {
 
             tiles[data.tile_id] = paper.rect(data.x, data.y, 80, 50).attr({fill: '#000', 'fill-opacity': 0.5, stroke: 'none'});
             tiles[data.tile_id].node.onclick = function() {
-                stealSelection(data.tile_id, focusedTiles, tiles);
+                transferSelection(data.tile_id, focusedTiles, tiles);
             };
 
             // If this is tile 0 we are inserting, then assume we are on start-up and select it as well.
@@ -81,20 +81,21 @@ window.onload = function() {
 }
 
 // ===============================================
-// OnClick callback making tiles draggable
-function stealSelection(thisTileNum, focusedTiles, tiles) {
-    if(thisTileNum != focusedTiles.selectedTile) {
+// Transfers selection (i.e. the state of being selected) from one tile to another.
+//   A selected tile is highlighted with a transparent red border, and becomes draggable.
+function transferSelection(targetTile, focusedTiles, tiles) {
+    if(targetTile != focusedTiles.selectedTile) {
         // remove highlight on previously selected tile
         tiles[focusedTiles.selectedTile].attr({ stroke: 'none', cursor: 'auto' });
         // set undrag on previously selected tile
         tiles[focusedTiles.selectedTile].undrag();
 
         // highlight tile with red stroke
-        tiles[thisTileNum].attr({ stroke: '#802', 'stroke-width': 3, 'stroke-opacity': 0.5, cursor: 'move' });
+        tiles[targetTile].attr({ stroke: '#802', 'stroke-width': 3, 'stroke-opacity': 0.5, cursor: 'move' });
         // make tile draggable
-        tiles[thisTileNum].drag(ongoingDrag, onStartDrag, onEndDrag);
+        tiles[targetTile].drag(ongoingDrag, onStartDrag, onEndDrag);
 
-        focusedTiles.selectedTile = thisTileNum;
+        focusedTiles.selectedTile = targetTile;
     }
 }
 
@@ -144,13 +145,24 @@ function createNewTile(paper, tiles) {
 
     tiles[data.tile_id] = paper.rect(data.x, data.y, 80, 50).attr({fill: '#000', 'fill-opacity': 0.5, stroke: 'none'});
     tiles[data.tile_id].node.onclick = function() {
-        stealSelection(data.tile_id, focusedTiles, tiles);
+        transferSelection(data.tile_id, focusedTiles, tiles);
     };
     // by default, select new tile
-    stealSelection(data.tile_id, focusedTiles, tiles);
+    transferSelection(data.tile_id, focusedTiles, tiles);
 
     socket.emit('broadcast', data);
     // @TODO - prevent full rendering until confirmation of insertion in the database has been reported back.
+}
+
+// ===============================================
+// Our tiles array may have holes (the sites of previous deletions), in which case tiles.length will be inaccurate.  
+// This function will return the correct result despite holes.
+function countElements(array) {
+    var elemCount = 0;
+    array.forEach(function() {
+        elemCount++;
+    });
+    return elemCount;
 }
 
 // ===============================================
