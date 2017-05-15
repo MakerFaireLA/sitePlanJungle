@@ -23,6 +23,10 @@ window.onload = function() {
     buttons[0].node.onclick = function() {
         createNewTile(paper, tiles);
     };
+    buttons.push(paper.rect(10, 450, 40, 40).attr({fill: '#500'}));
+    buttons[1].node.onclick = function() {
+        deleteSelectedTile(tiles);
+    };
 
     // ------------------------------------
     // 'broadcast' channel listener
@@ -73,8 +77,12 @@ window.onload = function() {
             // Delete operation implementation
             console.log("Received: 'broadcast' => delete tile_id " + data.tile_id);
 
-            // @TODO - does simply deleting the rectangle cause it to stop being rendered?
+            tiles[data.tile_id][0].remove();
             delete tiles[data.tile_id];
+
+            // @TODO - What if this is the currently selected tile?  That would leave no selected tile, which is
+            //   an invalid state!  No good!  (Not to mention incredibly aggrevating for the user.  We may need to 
+            //   find a more graceful way of informing the user that this tile is no more.)
 
         } // @TODO - else throw error
     });
@@ -152,6 +160,46 @@ function createNewTile(paper, tiles) {
 
     socket.emit('broadcast', data);
     // @TODO - prevent full rendering until confirmation of insertion in the database has been reported back.
+}
+
+// ===============================================
+// Transfers selection, removes previously selected tile from the tiles array, and reports tile_id 
+// to the server for deletion from the database.
+function deleteSelectedTile(tiles) {
+    // Does a tile to be deleted exist?
+    if(countElements(tiles) == 0 || focusedTiles.selectedTile == null) {
+        return;
+    } else {
+        var tbd_id = focusedTiles.selectedTile;  // 'tbd_id' --> 'to be deleted ID'
+        console.log("Initiating deletion of tile_id " + tbd_id);
+
+        // Transfer selection to another tile before deleting this one
+        if(countElements(tiles) >= 2) {
+            var newSelection;
+            for(newSelection of tiles) {
+                // Check if newSelection is a distinct tile from "tbd" (and not pointed at a hole).
+                if(tiles.indexOf(newSelection) != -1 && tiles.indexOf(newSelection) != tbd_id) {
+                    break;
+                }
+            }
+            transferSelection(tiles.indexOf(newSelection), focusedTiles, tiles);
+        } else {
+            // We have no other tile to which to transfer selection. 
+            focusedTiles.selectedTile = null;
+        }
+
+        tiles[tbd_id][0].remove();
+        delete tiles[tbd_id];
+
+        console.log("Sending 'broadcast' => delete tile_id " + tbd_id);
+
+        var data = {
+            op: 'd',
+            tile_id: tbd_id,
+        };
+
+        socket.emit('broadcast', data);
+    }
 }
 
 // ===============================================
