@@ -70,7 +70,7 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
                 // Update operation implementation
                 console.log("Received: 'broadcast' => update tile_id " + data.tile_id + " to " + data.x + " " + data.y);
 
-                db.collection('testbed').updateOne(
+                db.collection(process.env.MONGODB_COLLECTION).updateOne(
                     { "tile_id": data.tile_id },
                     {
                         $set: {
@@ -94,7 +94,7 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
                 // Create operation implementation
                 console.log("Received: 'broadcast' => create tile_id " + data.tile_id + " at " + data.x + " " + data.y);
 
-                db.collection('testbed').insertOne(
+                db.collection(process.env.MONGODB_COLLECTION).insertOne(
                     {'tile_id': data.tile_id, 'location':{'x': data.x, 'y':data.y}},
                     function(err) {
                         if(err) {
@@ -110,7 +110,7 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
                 // Delete operation implementation
                 console.log("Received: 'broadcast' => delete tile_id " + data.tile_id);
 
-                db.collection('testbed').deleteOne(
+                db.collection(process.env.MONGODB_COLLECTION).deleteOne(
                     {'tile_id': data.tile_id},
                     function(err) {
                         if(err) {
@@ -127,7 +127,7 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
                 // Read operation implementation
                 console.log("Received: 'broadcast' => read tile_id " + data.tile_id);
 
-                db.collection('testbed').findOne(
+                db.collection(process.env.MONGODB_COLLECTION).findOne(
                     {'tile_id': data.tile_id},
                     function(err, doc) {
                         if(err) {
@@ -154,7 +154,7 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
         socket.on('server', function(message) {
             console.log("Received: 'server' => request for initialization on all tiles.");
 
-            db.collection('testbed').find({ 'tile_id': { $exists: true } }).toArray(function (err, res) {
+            db.collection(process.env.MONGODB_COLLECTION).find({ 'tile_id': { $exists: true } }).toArray(function (err, res) {
                 if(err) {
                     console.log("Error: failed to retrieve tile data from database, cannot initialize client.");
                     throw err;
