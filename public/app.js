@@ -2,28 +2,46 @@
 // Global variables
 var socket;
 var focusedTiles = {};
+// The following items had to be moved up here simply so that scale_factor would be global and thus 
+// it would be available in the ongoingDrag function.  God I hate pre-prototyped functions.
+var image_size_pixels = {'x': 3024, 'y': 2160};
+var console_size_phys = {x:300000 /* mm */};
+var aspect_ratio = image_size_pixels.y/image_size_pixels.x;
+console_size_phys.y = aspect_ratio*console_size_phys.x;
+var scale_factor = console_size_phys.x/image_size_pixels.x /* mm/pixel */;
 
 // ===============================================
 // Main Routine 
 window.onload = function() { 
-    var paper = new Raphael(document.getElementById('canvas_container'), 500, 500);
+    
+    var paper = new Raphael(document.getElementById('canvas_container'), image_size_pixels.x, image_size_pixels.y);
     socket = io.connect('/');
-    var img = paper.image("http://i.imgur.com/L9uSTVr.png", 0, 0, 3024, 2160);
-    var tiles = [];
+    // https://www.justinmccandless.com/post/making-sense-of-svg-viewboxs-madness/
+    // The ViewBox creates a child element of the parent SVG and defines a distinct coordinate system 
+    // tied to it.  We will take advantage of this new coordinate freedom to define our own physical 
+    // coords tied to the map.  In this coordinate system 1 unit in this app will correspond to 1 mm 
+    // measured in the Van Nuys Civic Center Plaza.  I intend to avoid the use of floats in this code, 
+    // thus I have chosen 1 mm since that exceeds the finest resolution I ever expect this code to need 
+    // for any purpose.    
+    paper.setViewBox(0, 0, console_size_phys.x, console_size_phys.y);
+    paper.canvas.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    // Render the image at full scale in the physical coords and thus the two will be tied together.
+    var img = paper.image("http://i.imgur.com/L9uSTVr.png", 0, 0, console_size_phys.x, console_size_phys.y);
 
     // ------------------------------------
     // Load tiles from server
+    var tiles = [];
     requestAllTiles();
 
     // ------------------------------------
     // Render buttons
     var buttons = [];
     // Create new tile button.
-    buttons.push(paper.rect(450, 450, 40, 40).attr({fill: '#005'}));
+    buttons.push(paper.rect(450*scale_factor, 450*scale_factor, 40*scale_factor, 40*scale_factor).attr({fill: '#005'}));
     buttons[0].node.onclick = function() {
         createNewTile(paper, tiles);
     };
-    buttons.push(paper.rect(10, 450, 40, 40).attr({fill: '#500'}));
+    buttons.push(paper.rect(10*scale_factor, 450*scale_factor, 40*scale_factor, 40*scale_factor).attr({fill: '#500'}));
     buttons[1].node.onclick = function() {
         deleteSelectedTile(tiles);
     };
@@ -48,9 +66,9 @@ window.onload = function() {
         } else if(data.op == 'c') {
             // ------------------------------
             // Create operation implementation
-            console.log("Received: 'broadcast' => create tile_id " + data.tile_id + " at " + data.x + " " + data.y);
+            console.log("Received: 'broadcast' => create (op = 'c') tile_id " + data.tile_id + " at " + data.x + " " + data.y);
 
-            tiles[data.tile_id] = paper.rect(data.x, data.y, 80, 50).attr({fill: '#000', 'fill-opacity': 0.5, stroke: 'none'});
+            tiles[data.tile_id] = paper.rect(data.x, data.y, 80*scale_factor, 50*scale_factor).attr({fill: '#000', 'fill-opacity': 0.5, stroke: 'none'});
             tiles[data.tile_id].node.onclick = function() {
                 transferSelection(data.tile_id, focusedTiles, tiles);
             };
@@ -58,7 +76,7 @@ window.onload = function() {
             // If this is tile 0 we are inserting, then assume we are on start-up and select it as well.
             //  (Exactly one tile must always be selected.)
             if( data.tile_id == 0) {
-                tiles[0].attr({ stroke: '#802', 'stroke-width': 3, 'stroke-opacity': 0.5, cursor: 'move' });
+                tiles[0].attr({ stroke: '#802', 'stroke-width': 3*scale_factor, 'stroke-opacity': 0.5, cursor: 'move' });
                 // make tile 0 draggable
                 tiles[0].drag(ongoingDrag, onStartDrag, onEndDrag);
                 focusedTiles.selectedTile = 0;
@@ -75,7 +93,7 @@ window.onload = function() {
         } else if(data.op == 'd') {
             // ------------------------------
             // Delete operation implementation
-            console.log("Received: 'broadcast' => delete tile_id " + data.tile_id);
+            console.log("Received: 'broadcast' => delete (op = 'd') tile_id " + data.tile_id);
 
             tiles[data.tile_id][0].remove();
             delete tiles[data.tile_id];
@@ -99,7 +117,7 @@ function transferSelection(targetTile, focusedTiles, tiles) {
         tiles[focusedTiles.selectedTile].undrag();
 
         // highlight tile with red stroke
-        tiles[targetTile].attr({ stroke: '#802', 'stroke-width': 3, 'stroke-opacity': 0.5, cursor: 'move' });
+        tiles[targetTile].attr({ stroke: '#802', 'stroke-width': 3*scale_factor, 'stroke-opacity': 0.5, cursor: 'move' });
         // make tile draggable
         tiles[targetTile].drag(ongoingDrag, onStartDrag, onEndDrag);
 
@@ -110,7 +128,7 @@ function transferSelection(targetTile, focusedTiles, tiles) {
 // ===============================================
 // Callbacks for dragging tiles
 function ongoingDrag(dx, dy) {
-    this.attr({ x: this.ox + dx, y: this.oy + dy });
+    this.attr({ x: Math.round(this.ox + dx*scale_factor), y: Math.round(this.oy + dy*scale_factor) });
 }
 
 function onStartDrag() {
@@ -146,12 +164,12 @@ function createNewTile(paper, tiles) {
     var data = {
         op: 'c',
         tile_id: Math.max(...tiles.keys())+1,
-        x: 250,
-        y: 250
+        x: 250*scale_factor,
+        y: 250*scale_factor
     };
     // @TODO - allow user to select location where new tile will appear.
 
-    tiles[data.tile_id] = paper.rect(data.x, data.y, 80, 50).attr({fill: '#000', 'fill-opacity': 0.5, stroke: 'none'});
+    tiles[data.tile_id] = paper.rect(data.x, data.y, 80*scale_factor, 50*scale_factor).attr({fill: '#000', 'fill-opacity': 0.5, stroke: 'none'});
     tiles[data.tile_id].node.onclick = function() {
         transferSelection(data.tile_id, focusedTiles, tiles);
     };
