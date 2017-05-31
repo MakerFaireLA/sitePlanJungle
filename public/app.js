@@ -135,6 +135,9 @@ function ongoingDrag(dx, dy) {
     var dx_p = (dx - this.ox)*scale_factor;
     var dy_p = (dy - this.oy)*scale_factor;
     this.transform("...T" + dx_p + "," + dy_p);
+    // I'm starting to get a clue.  '...' just means append in the weird language of 
+    // string specified sequential transforms.  So this just means 'Translate'.  This 
+    // method simply piles on additional transforms.  That's awful.
     this.ox = dx;
     this.oy = dy;
     //this.attr({ x: Math.round(this.ox + dx_p), y: Math.round(this.oy + dy_p) });
