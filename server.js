@@ -68,7 +68,8 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
             } else if(data.op == 'u') {
                 // ------------------------------
                 // Update operation implementation
-                console.log("Received: 'broadcast' => update tile_id " + data.tile_id + " to " + data.x + " " + data.y);
+                console.log("Received: 'broadcast' => update tile_id " + data.tile_id + " to " + data.x + " " + data.y 
+                    + " and theta " + data.theta);
 
                 db.collection(process.env.MONGODB_COLLECTION).updateOne(
                     { "tile_id": data.tile_id },
@@ -77,7 +78,8 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
                             "location": {
                                 'x': data.x,
                                 'y': data.y
-                            }
+                            },
+                            "theta": data.theta
                         }
                     }, function (err) {
                         if (err) {
@@ -92,10 +94,11 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
             } else if(data.op == 'c') {
                 // ------------------------------
                 // Create operation implementation
-                console.log("Received: 'broadcast' => create tile_id " + data.tile_id + " at " + data.x + " " + data.y);
+                console.log("Received: 'broadcast' => create tile_id " + data.tile_id + " at " + data.x + " " + data.y 
+                    + " with theta " + data.theta);
 
                 db.collection(process.env.MONGODB_COLLECTION).insertOne(
-                    {'tile_id': data.tile_id, 'location':{'x': data.x, 'y':data.y}},
+                    {'tile_id': data.tile_id, 'location':{'x': data.x, 'y':data.y}, 'theta': data.theta},
                     function(err) {
                         if(err) {
                             console.log("Error: Unable to insert new tile in database for tile_id " + data.tile_id);
@@ -139,6 +142,7 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
                                 tile_id: data.tile_id,
                                 x: data.x,
                                 y: data.y,
+                                theta: data.theta
                             };
 
                             socket.emit('broadcast', update);
@@ -156,11 +160,11 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
 
             db.collection(process.env.MONGODB_COLLECTION).find({ 'tile_id': { $exists: true } }).toArray(function (err, res) {
                 if(err) {
-                    console.log("Error: failed to retrieve tile data from database, cannot initialize client.");
+                    console.log("Error: failed to retrieve tile data from database, will not be able to initialize client.");
                     throw err;
                 } else {
                     for (var key in res) {
-                        sendTileInitData(socket, res[key].tile_id, res[key].location.x, res[key].location.y);
+                        sendTileInitData(socket, res[key].tile_id, res[key].location.x, res[key].location.y, res[key].theta);
                     }
                 }
             });
@@ -175,14 +179,16 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
 
 // ===============================================
 // Send client tile initialization data
-function sendTileInitData(tunnel, id, xpos, ypos) {
-    console.log("Send 'broadcast' => initialize (op = 'c') tile_id " + id + " at " + xpos + " " + ypos);
+function sendTileInitData(tunnel, tile_id_Arg, xArg, yArg, thetaArg) {
+    console.log("Send 'broadcast' => initialize (op = 'c') tile_id " + tile_id_Arg + " at " + xArg + " " + yArg
+        + " with theta " + thetaArg);
 
     var data = {
         op: 'c',
-        tile_id: id,
-        x: xpos,
-        y: ypos
+        tile_id: tile_id_Arg,
+        x: xArg,
+        y: yArg,
+        theta: thetaArg
     };
 
     tunnel.emit('broadcast', data);

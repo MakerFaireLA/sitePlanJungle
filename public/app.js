@@ -5,7 +5,7 @@ var focusedTiles = {};
 // The following items had to be moved up here simply so that scale_factor would be global and thus 
 // it would be available in the ongoingDrag function.  God I hate pre-prototyped functions.
 var image_size_pixels = {'x': 3024, 'y': 2160};
-var console_size_phys = {x:300000 /* mm */};
+var console_size_phys = {'x':300000 /* mm */};
 var aspect_ratio = image_size_pixels.y/image_size_pixels.x;
 console_size_phys.y = aspect_ratio*console_size_phys.x;
 var scale_factor = console_size_phys.x/image_size_pixels.x /* mm/pixel */;
@@ -39,7 +39,7 @@ window.onload = function() {
     // Create new tile button.
     buttons.push(paper.rect(450*scale_factor, 450*scale_factor, 40*scale_factor, 40*scale_factor).attr({fill: '#005'}));
     buttons[0].node.onclick = function() {
-        createNewTile(paper, tiles);
+        createDefaultTile(paper, tiles);
     };
     buttons.push(paper.rect(10*scale_factor, 450*scale_factor, 40*scale_factor, 40*scale_factor).attr({fill: '#500'}));
     buttons[1].node.onclick = function() {
@@ -59,16 +59,18 @@ window.onload = function() {
         } else if(data.op == 'u') {
             // ------------------------------
             // Update operation implementation
-            console.log("Received: 'broadcast' => update tile_id " + data.tile_id + " to " + data.x + " " + data.y);
+            console.log("Received: 'broadcast' => update tile_id " + data.tile_id + " to " + data.x + " " + data.y 
+                + " with theta " + data.theta);
 
-            tiles[data.tile_id].attr({ x: data.x, y: data.y });
+            tiles[data.tile_id].attr({ x: data.x, y: data.y }).rotate(data.theta);
 
         } else if(data.op == 'c') {
             // ------------------------------
             // Create operation implementation
-            console.log("Received: 'broadcast' => create (op = 'c') tile_id " + data.tile_id + " at " + data.x + " " + data.y);
+            console.log("Received: 'broadcast' => create (op = 'c') tile_id " + data.tile_id + " at " + data.x + " " + data.y + " with theta " + data.theta);
 
-            tiles[data.tile_id] = paper.rect(data.x, data.y, 80*scale_factor, 50*scale_factor).attr({fill: '#000', 'fill-opacity': 0.5, stroke: 'none'});
+            tiles[data.tile_id] = paper.rect(data.x, data.y, 80*scale_factor, 50*scale_factor).rotate(data.theta).attr(
+                {fill: '#000', 'fill-opacity': 0.5, stroke: 'none'});
             tiles[data.tile_id].node.onclick = function() {
                 transferSelection(data.tile_id, focusedTiles, tiles);
             };
@@ -137,20 +139,24 @@ function onStartDrag() {
 }
 
 function onEndDrag() {
-    // report new final position to server
-    updateTilePosition(focusedTiles.selectedTile, this.attr("x"), this.attr("y"));
+    // report new final position and angle to server
+    var tileTheta = this._.transform[0][1];
+    // console.log("dragged tile angle is " + tileTheta);
+    updateTilePosition(focusedTiles.selectedTile, this.attr("x"), this.attr("y"), tileTheta);
 }
 
 // ===============================================
 // Send updated tile position through the socket back to the database
-function updateTilePosition(id, xpos, ypos) {
-    console.log("Sending position: " + xpos + " " + ypos + " for tile number: " + id);
+function updateTilePosition(tile_id_Arg, xArg, yArg, thetaArg) {
+    console.log("Sending 'broadcast': update tile_id " + tile_id_Arg + " at " + xArg + " " + yArg 
+        + " with theta " + thetaArg);
 
     var data = {
         op: 'u',
-        tile_id: id,
-        x: xpos,
-        y: ypos
+        tile_id: tile_id_Arg,
+        x: xArg,
+        y: yArg,
+        theta: thetaArg
     };
 
     socket.emit('broadcast', data);
@@ -159,17 +165,19 @@ function updateTilePosition(id, xpos, ypos) {
 // ===============================================
 // Create new tile with max+1 tile_id, render it on map, and report it to the server 
 //   for insertion in the database.
-function createNewTile(paper, tiles) {
+function createDefaultTile(paper, tiles) {
     
     var data = {
         op: 'c',
         tile_id: Math.max(...tiles.keys())+1,
         x: 250*scale_factor,
-        y: 250*scale_factor
+        y: 250*scale_factor,
+        theta: 0 // default tile initial theta
     };
     // @TODO - allow user to select location where new tile will appear.
 
-    tiles[data.tile_id] = paper.rect(data.x, data.y, 80*scale_factor, 50*scale_factor).attr({fill: '#000', 'fill-opacity': 0.5, stroke: 'none'});
+    tiles[data.tile_id] = paper.rect(data.x, data.y, 80*scale_factor, 50*scale_factor).rotate(data.theta).attr(
+        {fill: '#000', 'fill-opacity': 0.5, stroke: 'none'});
     tiles[data.tile_id].node.onclick = function() {
         transferSelection(data.tile_id, focusedTiles, tiles);
     };
