@@ -1,5 +1,7 @@
 # sitePlanJungle - 
 
+## Site Planning Software for Sticky Situations
+
 Cloud-based collaborative 2D site planning web app being developed for use by the sponsors of the upcoming 
 [__San Fernando Valley Mini Maker Faire__](https://www.makerfaire.la/) on Oct 7th, 2017.  The minimalistic 
 UI allows users to manipulate, relate and annotate tiles intended to represent tents, booths, port-a-poties 
@@ -14,4 +16,4 @@ While the code is *very* pre-release at the moment, it is publicly available und
 so inclined, have a go.  Feel free to contact me if you have questions or suggestions.  I am the sole 
 developer at the moment, but I'm not at all set on keeping it that way.
 
-- Keith
+Keith
