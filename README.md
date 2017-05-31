@@ -12,6 +12,6 @@ over to something more modern like snap.js.
 
 While the code is *very* pre-release at the moment, it is publicly available under the lGPLv3, so if you are
 so inclined, have a go.  Feel free to contact me if you have questions or suggestions.  I am the sole 
-developer at the moment, but I'm not set on keeping it that way.
+developer at the moment, but I'm not at all set on keeping it that way.
 
 - Keith
