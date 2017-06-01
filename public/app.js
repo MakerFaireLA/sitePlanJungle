@@ -130,22 +130,15 @@ function transferSelection(targetTile, focusedTiles, tiles) {
 // ===============================================
 // Callbacks for dragging tiles
 function ongoingDrag(dx, dy) {
-    // Attempting to follow this recipe...
-    // https://stackoverflow.com/questions/37299775/raphael-drag-object-after-rotation
-    var dx_p = (dx - this.ox)*scale_factor;
-    var dy_p = (dy - this.oy)*scale_factor;
+    var dx_p = dx;
+    var dy_p = dy;
     this.transform("...T" + dx_p + "," + dy_p);
-    // I'm starting to get a clue.  '...' just means append in the weird language of 
-    // string specified sequential transforms.  So this just means 'Translate'.  This 
-    // method simply piles on additional transforms.  That's awful.
-    this.ox = dx;
-    this.oy = dy;
-    //this.attr({ x: Math.round(this.ox + dx_p), y: Math.round(this.oy + dy_p) });
+    this.attr({ x: Math.round(this.ox + dx_p), y: Math.round(this.oy + dy_p) });
 }
 
 function onStartDrag() {
-    this.ox = 0;
-    this.oy = 0;
+    this.ox = this.attr("x");
+    this.oy = this.attr("y");
 }
 
 function onEndDrag() {
@@ -153,9 +146,6 @@ function onEndDrag() {
     var tileTheta = this._.transform[0][1];
     // console.log("dragged tile angle is " + tileTheta);
     updateTilePosition(focusedTiles.selectedTile, this.attr("x"), this.attr("y"), tileTheta);
-    // @TODO - I suspect that this.attr("x") and this.attr("y") produce the location in the 
-    // wrong coordinate system.  When I reload I find that the tiles have moved back to their
-    // undragged locations again.  This needs to be debugged.
 }
 
 // ===============================================
