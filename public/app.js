@@ -14,19 +14,11 @@ var scale_factor = console_size_phys.x/image_size_pixels.x /* mm/pixel */;
 // Main Routine 
 window.onload = function() { 
     
-    var paper = new Raphael(document.getElementById('canvas_container'), image_size_pixels.x, image_size_pixels.y);
     socket = io.connect('/');
-    // https://www.justinmccandless.com/post/making-sense-of-svg-viewboxs-madness/
-    // The ViewBox creates a child element of the parent SVG and defines a distinct coordinate system 
-    // tied to it.  We will take advantage of this new coordinate freedom to define our own physical 
-    // coords tied to the map.  In this coordinate system 1 unit in this app will correspond to 1 mm 
-    // measured in the Van Nuys Civic Center Plaza.  I intend to avoid the use of floats in this code, 
-    // thus I have chosen 1 mm since that exceeds the finest resolution I ever expect this code to need 
-    // for any purpose.    
-    paper.setViewBox(0, 0, console_size_phys.x, console_size_phys.y);
-    paper.canvas.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-    // Render the image at full scale in the physical coords and thus the two will be tied together.
-    var img = paper.image("http://i.imgur.com/L9uSTVr.png", 0, 0, console_size_phys.x, console_size_phys.y);
+    // We will define our own physical coords tied to the map.  In this coordinate system 1 unit in this app will 
+    // correspond to 1 mm measured on the ground in the Van Nuys Civic Center Plaza.  I intend to avoid the use 
+    // of floats in this code, thus I have chosen 1 mm since that exceeds the finest resolution I ever expect 
+    // this code to need for any purpose.
 
     // ------------------------------------
     // Load tiles from server
