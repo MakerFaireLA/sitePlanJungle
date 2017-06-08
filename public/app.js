@@ -130,10 +130,7 @@ function transferSelection(targetTile, focusedTiles, tiles) {
 // ===============================================
 // Callbacks for dragging tiles
 function ongoingDrag(dx, dy) {
-    var dx_p = dx;
-    var dy_p = dy;
-    this.transform("...T" + dx_p + "," + dy_p);
-    this.attr({ x: Math.round(this.ox + dx_p), y: Math.round(this.oy + dy_p) });
+    this.attr({ x: Math.round(this.ox + dx*scale_factor), y: Math.round(this.oy + dy*scale_factor) });
 }
 
 function onStartDrag() {
