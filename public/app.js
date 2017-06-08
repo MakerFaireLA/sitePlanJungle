@@ -1,7 +1,7 @@
 // ===============================================
 // Global variables
 var socket;
-var focusedTiles = {};
+
 // The following items had to be moved up here simply so that scale_factor would be global and thus 
 // it would be available in the ongoingDrag function.  God I hate pre-prototyped functions.
 var image_size_pixels = {'x': 3024, 'y': 2160};
@@ -25,18 +25,18 @@ window.onload = function() {
     var tiles = [];
     requestAllTiles();
 
-    // ------------------------------------
-    // Render buttons
-    var buttons = [];
-    // Create new tile button.
-    buttons.push(paper.rect(450*scale_factor, 450*scale_factor, 40*scale_factor, 40*scale_factor).attr({fill: '#005'}));
-    buttons[0].node.onclick = function() {
-        createDefaultTile(paper, tiles);
-    };
-    buttons.push(paper.rect(10*scale_factor, 450*scale_factor, 40*scale_factor, 40*scale_factor).attr({fill: '#500'}));
-    buttons[1].node.onclick = function() {
-        deleteSelectedTile(tiles);
-    };
+    // // ------------------------------------
+    // // Render buttons
+    // var buttons = [];
+    // // Create new tile button.
+    // buttons.push(paper.rect(450*scale_factor, 450*scale_factor, 40*scale_factor, 40*scale_factor).attr({fill: '#005'}));
+    // buttons[0].node.onclick = function() {
+    //     createDefaultTile(paper, tiles);
+    // };
+    // buttons.push(paper.rect(10*scale_factor, 450*scale_factor, 40*scale_factor, 40*scale_factor).attr({fill: '#500'}));
+    // buttons[1].node.onclick = function() {
+    //     deleteSelectedTile(tiles);
+    // };
 
     // ------------------------------------
     // 'broadcast' channel listener
@@ -63,18 +63,6 @@ window.onload = function() {
 
             tiles[data.tile_id] = paper.rect(data.x, data.y, 80*scale_factor, 50*scale_factor).rotate(data.theta).attr(
                 {fill: '#000', 'fill-opacity': 0.5, stroke: 'none'});
-            tiles[data.tile_id].node.onclick = function() {
-                transferSelection(data.tile_id, focusedTiles, tiles);
-            };
-
-            // If this is tile 0 we are inserting, then assume we are on start-up and select it as well.
-            //  (Exactly one tile must always be selected.)
-            if( data.tile_id == 0) {
-                tiles[0].attr({ stroke: '#802', 'stroke-width': 3*scale_factor, 'stroke-opacity': 0.5, cursor: 'move' });
-                // make tile 0 draggable
-                tiles[0].drag(ongoingDrag, onStartDrag, onEndDrag);
-                focusedTiles.selectedTile = 0;
-            }
 
         } else if(data.op == 'r') {
             // ------------------------------
