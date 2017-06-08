@@ -131,12 +131,11 @@ function transferSelection(targetTile, focusedTiles, tiles) {
 // Callbacks for dragging tiles
 function ongoingDrag(dx, dy) {
     // console.log("ongoingDrag called.");
-    var theta = this._.transform[0][1];
-    // var theta = 0;
-    // console.log("onegoingDrag called with theta = " + theta);
-    theta += 90; // empirically determined correction factor
-    var dx_p = Math.cos(theta)*dx + Math.sin(theta)*dy;
-    var dy_p = -Math.sin(theta)*dx + Math.cos(theta)*dy;
+    var phi = this._.transform[0][1];
+    // var phi = 0;
+    console.log("onegoingDrag called with phi = " + phi);
+    var dx_p = Math.cos(phi)*dx + Math.sin(phi)*dy;
+    var dy_p = -Math.sin(phi)*dx + Math.cos(phi)*dy;
     this.attr({ x: Math.round(this.ox + dx_p*scale_factor), y: Math.round(this.oy + dy_p*scale_factor) });
 }
 
