@@ -8,25 +8,37 @@
 function renderTile(tile) {
     const html = `<div id="id-${tile.tile_id}" class="tile" style="left: ${Math.round(tile.x/scale_factor)}px; top: ${Math.round(tile.y/scale_factor)}px; transform: rotateZ(${tile.theta}deg);"> </div>`;
     $('.container').append(html);
+
+    $('#id-' + tile.tile_id).mousedown(function(event) {
+        $(event.target).addClass('moveTile');
+    });
 }
 
 // ===============================================
-// Callbacks for dragging tiles
-function ongoingDrag(dx, dy) {
-    this.attr({ x: Math.round(this.ox + dx*scale_factor), y: Math.round(this.oy + dy*scale_factor) });
+// Modifies the tile's HTML thus changing it's location
+//   Effectively moves a tile
+//   Since the location is stored in the style tag, we mod its .css
+function moveTile(newdata) {
+    $('#id-' + newdata.tile_id).css('left', newdata.x).css('top', newdata.y);
 }
 
-function onStartDrag() {
-    this.ox = this.attr("x");
-    this.oy = this.attr("y");
-}
+// // ===============================================
+// // Callbacks for dragging tiles
+// function ongoingDrag(dx, dy) {
+//     this.attr({ x: Math.round(this.ox + dx*scale_factor), y: Math.round(this.oy + dy*scale_factor) });
+// }
 
-function onEndDrag() {
-    // report new final position and angle to server
-    var tileTheta = this._.transform[0][1];
-    // console.log("dragged tile angle is " + tileTheta);
-    updateTilePosition(focusedTiles.selectedTile, this.attr("x"), this.attr("y"), tileTheta);
-}
+// function onStartDrag() {
+//     this.ox = this.attr("x");
+//     this.oy = this.attr("y");
+// }
+
+// function onEndDrag() {
+//     // report new final position and angle to server
+//     var tileTheta = this._.transform[0][1];
+//     // console.log("dragged tile angle is " + tileTheta);
+//     updateTilePosition(focusedTiles.selectedTile, this.attr("x"), this.attr("y"), tileTheta);
+// }
 
 // ===============================================
 // Create new tile with max+1 tile_id, render it on map, and report it to the server 

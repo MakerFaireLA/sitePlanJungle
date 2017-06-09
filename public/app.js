@@ -25,6 +25,23 @@ window.onload = function() {
     var tiles = [];
     requestAllTiles();
 
+    // ------------------------------------
+    // Install callback responsible for handling dragging of tiles
+    $(document).mousemove(function(event) {
+        // There should only be one element on the page with a 'move' attached,
+        // that one being the one selected when mousedown was triggered. That 
+        // is why it is safe to operate 'mousemove' at document level.  
+        // Furthermore this insures that 'mousemove' will still operate even if 
+        // the mouse drifts off of the element being dragged.
+        $('.moveTile').css('left', event.pageX).css('top', event.pageY);
+    });
+
+    // ------------------------------------
+    // Install callback responsible for handling dropping of tiles
+    $(document).mouseup(function(event) {
+        $('.moveTile').removeClass('moveTile');
+    });
+
     // // ------------------------------------
     // // Render buttons
     // var buttons = [];
