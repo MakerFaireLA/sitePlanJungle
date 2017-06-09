@@ -54,15 +54,14 @@ window.onload = function() {
             console.log("Received: 'broadcast' => update tile_id " + data.tile_id + " to " + data.x + " " + data.y 
                 + " with theta " + data.theta);
 
-            tiles[data.tile_id].attr({ x: data.x, y: data.y }).rotate(data.theta);
+            renderTile(data);
 
         } else if(data.op == 'c') {
             // ------------------------------
             // Create operation implementation
             console.log("Received: 'broadcast' => create (op = 'c') tile_id " + data.tile_id + " at " + data.x + " " + data.y + " with theta " + data.theta);
 
-            tiles[data.tile_id] = paper.rect(data.x, data.y, 80*scale_factor, 50*scale_factor).rotate(data.theta).attr(
-                {fill: '#000', 'fill-opacity': 0.5, stroke: 'none'});
+            renderTile(data);
 
         } else if(data.op == 'r') {
             // ------------------------------

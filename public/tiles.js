@@ -2,7 +2,13 @@
 // Functions related to the manipulation of tiles
 
 // ===============================================
-// 
+// Inserts HTML for rendering a tile 
+//   To be called everytime a tile is added, moved, or otherwise modified.
+//   @TODO - Understand why this works for rerendering an already added tile.
+function renderTile(tile) {
+    const html = `<div id="id-${tile.tile_id}" class="tile" style="left: ${tile.x}px; top: ${tile.y}px; transform: rotateZ(${tile.theta}deg);"> </div>`;
+    $('.container').append(html);
+}
 
 // ===============================================
 // Callbacks for dragging tiles
@@ -53,4 +59,3 @@ function countElements(array) {
     });
     return elemCount;
 }
-
