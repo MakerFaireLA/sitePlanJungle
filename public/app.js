@@ -30,7 +30,6 @@ window.onload = function() {
 
     // ------------------------------------
     // Load tiles from server
-    var tiles = [];
     requestAllTiles();
 
     // ------------------------------------
@@ -101,12 +100,9 @@ window.onload = function() {
             // Delete operation implementation
             console.log("Received: 'broadcast' => delete (op = 'd') tile_id " + data.tile_id);
 
-            tiles[data.tile_id][0].remove();
-            delete tiles[data.tile_id];
-
-            // @TODO - What if this is the currently selected tile?  That would leave no selected tile, which is
-            //   an invalid state!  No good!  (Not to mention incredibly aggrevating for the user.  We may need to 
-            //   find a more graceful way of informing the user that this tile is no more.)
+            // @TODO - reimplement delete operation.
+            // tiles[data.tile_id][0].remove();
+            // delete tiles[data.tile_id];
 
         } // @TODO - else throw error
     });
