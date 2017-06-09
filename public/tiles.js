@@ -17,10 +17,10 @@ function renderTile(tile) {
 // ===============================================
 // Modifies the tile's HTML thus changing it's location
 //   Effectively moves a tile
-//   Since the location is stored in the style tag, we mod its .css
-function moveTile(newdata) {
-    $('#id-' + newdata.tile_id).css('left', newdata.x).css('top', newdata.y);
-}
+//   Since the location is stored in the style tag, we mod its CSS
+// function moveTile(newdata) {
+//     $('#id-' + newdata.tile_id).css('left', newdata.x).css('top', newdata.y);
+// }
 
 // // ===============================================
 // // Callbacks for dragging tiles
