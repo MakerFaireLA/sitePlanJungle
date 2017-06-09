@@ -116,16 +116,16 @@ window.onload = function() {
 // ===============================================
 // ===============================================
 // Send updated tile position through the socket back to the database
-function updateTilePosition(tile_id_Arg, xArg, yArg, thetaArg) {
-    console.log("Sending 'broadcast': update tile_id " + tile_id_Arg + " at " + xArg + " " + yArg 
-        + " with theta " + thetaArg);
+function updateTilePosition(tile) {
+    console.log("Sending 'broadcast': update tile_id " + tile.tile_id + " at " + tile.x + " " + tile.y 
+        + " with theta " + tile.theta);
 
     var data = {
         op: 'u',
-        tile_id: tile_id_Arg,
-        x: xArg,
-        y: yArg,
-        theta: thetaArg
+        tile_id: tile.tile_id,
+        x: tile.x,
+        y: tile.y,
+        theta: tile.theta
     };
 
     socket.emit('broadcast', data);
