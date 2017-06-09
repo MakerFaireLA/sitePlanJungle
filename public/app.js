@@ -46,6 +46,7 @@ window.onload = function() {
     // ------------------------------------
     // Install callback responsible for handling dropping of tiles
     $(document).mouseup(function(event) {
+        updateTilePosition(retrieveTileDataFromHTML(event));
         $('.moveTile').removeClass('moveTile');
     });
 
@@ -78,12 +79,15 @@ window.onload = function() {
             console.log("Received: 'broadcast' => update tile_id " + data.tile_id + " to " + data.x + " " + data.y 
                 + " with theta " + data.theta);
 
-            renderTile(data);
+            // @TODO - Implement an update operation here.  Using renderTile() is incorrect.  We could call moveTile
+            //   except that it does not handle changes in theta.
+            // renderTile(data);
 
         } else if(data.op == 'c') {
             // ------------------------------
             // Create operation implementation
-            console.log("Received: 'broadcast' => create (op = 'c') tile_id " + data.tile_id + " at " + data.x + " " + data.y + " with theta " + data.theta);
+            console.log("Received: 'broadcast' => create (op = 'c') tile_id " + data.tile_id + " at " + data.x + " " 
+                + data.y + " with theta " + data.theta);
 
             renderTile(data);
 
@@ -113,14 +117,17 @@ window.onload = function() {
 // ===============================================
 // Send updated tile position through the socket back to the database
 function updateTilePosition(tile) {
-    console.log("Sending 'broadcast': update tile_id " + tile.tile_id + " at " + tile.x + " " + tile.y 
+    var new_x = Math.round(tile.x*scale_factor);
+    var new_y = Math.round(tile.y*scale_factor);
+
+    console.log("Sending 'broadcast': update tile_id " + tile.tile_id + " at " + new_x + " " + new_y 
         + " with theta " + tile.theta);
 
     var data = {
         op: 'u',
         tile_id: tile.tile_id,
-        x: tile.x,
-        y: tile.y,
+        x: new_x,
+        y: new_y,
         theta: tile.theta
     };
 
