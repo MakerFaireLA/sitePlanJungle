@@ -24,6 +24,18 @@ function renderTile(tile) {
 //     $('#id-' + newdata.tile_id).css('left', newdata.x).css('top', newdata.y);
 // }
 
+// ===============================================
+// Given a 'event' associated with a tile, return a tile struct containing the 
+//   tile's data: e.g. tile_id, location, angle, etc.
+function retrieveTileDataFromHTML(event) {
+    var tile = {};
+    tile.tile_id = parseInt(event.target.id.replace(/[^\d]/g, ''), 10);
+    tile.x = parseInt($('#' + event.target.id).css('left'), 10);
+    tile.y = parseInt($('#' + event.target.id).css('top'), 10);
+    tile.theta = parseInt($('#' + event.target.id)[0].style.transform.replace(/[^\d]/g, ''), 10);
+    return tile;
+}
+
 // // ===============================================
 // // Callbacks for dragging tiles
 // function ongoingDrag(dx, dy) {
