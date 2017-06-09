@@ -10,6 +10,9 @@ var aspect_ratio = image_size_pixels.y/image_size_pixels.x;
 console_size_phys.y = aspect_ratio*console_size_phys.x;
 var scale_factor = console_size_phys.x/image_size_pixels.x /* mm/pixel */;
 
+var grab_deltax;
+var grab_deltay;
+
 // ===============================================
 // Main Routine 
 window.onload = function() { 
@@ -26,14 +29,14 @@ window.onload = function() {
     requestAllTiles();
 
     // ------------------------------------
-    // Install callback responsible for handling dragging of tiles
+    // Install callback responsible for handling dragging of tiles on mousemove
     $(document).mousemove(function(event) {
         // There should only be one element on the page with a 'move' attached,
         // that one being the one selected when mousedown was triggered. That 
         // is why it is safe to operate 'mousemove' at document level.  
         // Furthermore this insures that 'mousemove' will still operate even if 
         // the mouse drifts off of the element being dragged.
-        $('.moveTile').css('left', event.pageX).css('top', event.pageY);
+        $('.moveTile').css('left', event.pageX - grab_deltax).css('top', event.pageY - grab_deltay);
     });
 
     // ------------------------------------

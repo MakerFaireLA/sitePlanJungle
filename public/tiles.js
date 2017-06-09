@@ -10,6 +10,8 @@ function renderTile(tile) {
     $('.container').append(html);
 
     $('#id-' + tile.tile_id).mousedown(function(event) {
+        grab_deltax = event.pageX - parseInt($(event.target).css('left'), 10);
+        grab_deltay = event.pageY - parseInt($(event.target).css('top'), 10);
         $(event.target).addClass('moveTile');
     });
 }
