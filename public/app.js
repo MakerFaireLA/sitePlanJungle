@@ -46,7 +46,7 @@ window.onload = function() {
     // ------------------------------------
     // Install callback responsible for handling dropping of tiles
     $(document).mouseup(function(event) {
-        updateTilePosition(retrieveTileDataFromHTML(event));
+        reportTileUpdateToServer(retrieveTileDataFromHTML(event));
         $('.moveTile').removeClass('moveTile');
     });
 
@@ -116,7 +116,7 @@ window.onload = function() {
 // ===============================================
 // ===============================================
 // Send updated tile position through the socket back to the database
-function updateTilePosition(tile) {
+function reportTileUpdateToServer(tile) {
     var new_x = Math.round(tile.x*scale_factor);
     var new_y = Math.round(tile.y*scale_factor);
 
