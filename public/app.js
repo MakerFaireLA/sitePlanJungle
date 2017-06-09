@@ -10,6 +10,11 @@ var aspect_ratio = image_size_pixels.y/image_size_pixels.x;
 console_size_phys.y = aspect_ratio*console_size_phys.x;
 var scale_factor = console_size_phys.x/image_size_pixels.x /* mm/pixel */;
 
+// These two unfortunate globals keep track of the offset when the user picks up a tile
+// to drag it.  Since only one element can be dragged at a time I don't anticipate any 
+// issue with keeping a single copy of the data as a global.
+// @TODO - Find a way to store this data in the tile element rather than as a global
+//   simply because this is so ugly.
 var grab_deltax;
 var grab_deltay;
 
