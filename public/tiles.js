@@ -6,7 +6,7 @@
 //   To be called everytime a tile is added, moved, or otherwise modified.
 //   @TODO - Understand why this works for rerendering an already added tile.
 function renderTile(tile) {
-    const html = `<div id="id-${tile.tile_id}" class="tile" style="left: ${tile.x}px; top: ${tile.y}px; transform: rotateZ(${tile.theta}deg);"> </div>`;
+    const html = `<div id="id-${tile.tile_id}" class="tile" style="left: ${Math.round(tile.x/scale_factor)}px; top: ${Math.round(tile.y/scale_factor)}px; transform: rotateZ(${tile.theta}deg);"> </div>`;
     $('.container').append(html);
 }
 
