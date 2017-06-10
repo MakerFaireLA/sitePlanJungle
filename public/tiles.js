@@ -36,24 +36,6 @@ function retrieveTileDataFromHTML(event) {
     return tile;
 }
 
-// // ===============================================
-// // Callbacks for dragging tiles
-// function ongoingDrag(dx, dy) {
-//     this.attr({ x: Math.round(this.ox + dx*scale_factor), y: Math.round(this.oy + dy*scale_factor) });
-// }
-
-// function onStartDrag() {
-//     this.ox = this.attr("x");
-//     this.oy = this.attr("y");
-// }
-
-// function onEndDrag() {
-//     // report new final position and angle to server
-//     var tileTheta = this._.transform[0][1];
-//     // console.log("dragged tile angle is " + tileTheta);
-//     updateTilePosition(focusedTiles.selectedTile, this.attr("x"), this.attr("y"), tileTheta);
-// }
-
 // ===============================================
 // Create new tile with max+1 tile_id, render it on map, and report it to the server 
 //   for insertion in the database.
