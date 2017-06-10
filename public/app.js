@@ -50,19 +50,6 @@ window.onload = function() {
         $('.moveTile').removeClass('moveTile');
     });
 
-    // // ------------------------------------
-    // // Render buttons
-    // var buttons = [];
-    // // Create new tile button.
-    // buttons.push(paper.rect(450*scale_factor, 450*scale_factor, 40*scale_factor, 40*scale_factor).attr({fill: '#005'}));
-    // buttons[0].node.onclick = function() {
-    //     createDefaultTile(paper, tiles);
-    // };
-    // buttons.push(paper.rect(10*scale_factor, 450*scale_factor, 40*scale_factor, 40*scale_factor).attr({fill: '#500'}));
-    // buttons[1].node.onclick = function() {
-    //     deleteSelectedTile(tiles);
-    // };
-
     // ------------------------------------
     // 'broadcast' channel listener
     //     supports all CRUD operations
