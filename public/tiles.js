@@ -7,7 +7,7 @@
 //   @TODO - Understand why this works for rerendering an already added tile.
 function renderTile(tile) {
     const html = `<div id="id-${tile.tile_id}" class="tile" style="left: ${Math.round(tile.x/scale_factor)}px; 
-        top: ${Math.round(tile.y/scale_factor)}px; transform: rotateZ(${tile.theta}deg);">${tile.userRef}EOL${tile.userLabel}</div>`;
+        top: ${Math.round(tile.y/scale_factor)}px; transform: rotateZ(${tile.theta}deg);">${tile.userRef}<br>${tile.userLabel}</div>`;
     $('.container').append(html);
 
     $('#id-' + tile.tile_id).mousedown(function(event) {
