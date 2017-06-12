@@ -84,6 +84,7 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
                                 'y': data.dimy
                             },
                             "theta": data.theta,
+                            "color": data.color,
                             "userRef": data.userRef,
                             "userLabel": data.userLabel
                         }
@@ -105,7 +106,8 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
 
                 db.collection(process.env.MONGODB_COLLECTION).insertOne(
                     {'tile_id': data.tile_id, 'location':{'x': data.x, 'y':data.y}, 'theta': data.theta, 
-                    'dimensions':{'x': data.dimx, 'y': data.dimy}, 'userRef': data.userRef, 'userLabel': data.userLabel},
+                    'dimensions':{'x': data.dimx, 'y': data.dimy}, 'color': data.color,
+                    'userRef': data.userRef, 'userLabel': data.userLabel},
                     function(err) {
                         if(err) {
                             console.log("Error: Unable to insert new tile in database for tile_id " + data.tile_id);
@@ -152,6 +154,7 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
                                 dimx: data.dimx,
                                 dimy: data.dimy,
                                 theta: data.theta,
+                                color: data.color,
                                 userRef: data.userRef,
                                 userLabel: data.userLabel
                             };
@@ -176,7 +179,8 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
                 } else {
                     for (var key in res) {
                         sendTileInitData(socket, res[key].tile_id, res[key].location.x, res[key].location.y, 
-                            res[key].dimensions.x, res[key].dimensions.y, res[key].theta, res[key].userRef, res[key].userLabel);
+                            res[key].dimensions.x, res[key].dimensions.y, res[key].theta, res[key].color, 
+                            res[key].userRef, res[key].userLabel);
                     }
                 }
             });
@@ -191,7 +195,7 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
 
 // ===============================================
 // Send client tile initialization data
-function sendTileInitData(tunnel, tile_id_Arg, xArg, yArg, dimxArg, dimyArg, thetaArg, userRefArg, userLabelArg) {
+function sendTileInitData(tunnel, tile_id_Arg, xArg, yArg, dimxArg, dimyArg, thetaArg, colorArg, userRefArg, userLabelArg) {
     console.log("Send 'broadcast' => initialize (op = 'c') tile_id " + tile_id_Arg + " at " + xArg + " " + yArg
         + " with theta " + thetaArg + " etc...");
 
@@ -203,6 +207,7 @@ function sendTileInitData(tunnel, tile_id_Arg, xArg, yArg, dimxArg, dimyArg, the
         dimx: dimxArg,
         dimy: dimyArg,
         theta: thetaArg,
+        color: colorArg,
         userRef: userRefArg,
         userLabel: userLabelArg
     };

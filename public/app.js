@@ -118,6 +118,7 @@ function reportTileUpdateToServer(tile) {
         dimx: tile.dimx,
         dimy: tile.dimy,
         theta: tile.theta,
+        color: tile.color,
         userRef: tile.userRef,
         userLabel: tile.userLabel
     };

@@ -8,8 +8,8 @@
 function renderTile(tile) {
     const html = `<div id="id-${tile.tile_id}" class="tile" style="left: ${Math.round(tile.x/scale_factor)}px; 
         top: ${Math.round(tile.y/scale_factor)}px; transform: rotateZ(${tile.theta}deg); 
-        height: ${Math.round(tile.dimy/scale_factor)}px; width: ${Math.round(tile.dimx/scale_factor)}px;"
-        >${tile.userRef}<br>${tile.userLabel}</div>`;
+        height: ${Math.round(tile.dimy/scale_factor)}px; width: ${Math.round(tile.dimx/scale_factor)}px;
+        background: ${tile.color};">${tile.userRef}<br>${tile.userLabel}</div>`;
     $('.container').append(html);
 
     $('#id-' + tile.tile_id).mousedown(function(event) {
