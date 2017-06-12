@@ -28,14 +28,18 @@ function renderTile(tile) {
 // }
 
 // ===============================================
-// Given a 'event' associated with a tile, return a tile struct containing the 
-//   tile's data: e.g. tile_id, location, angle, etc.
-function retrieveTileDataFromHTML(event) {
+// Given a 'event' associated with a tile, return a tile struct containing limited 
+//   tile data, i.e. only the tile_id and the new location.
+function retrieveTileLocationFromHTML(event) {
     var tile = {};
     tile.tile_id = parseInt(event.target.id.replace(/[^\d]/g, ''), 10);
     tile.x = parseInt($('#' + event.target.id).css('left'), 10);
     tile.y = parseInt($('#' + event.target.id).css('top'), 10);
-    tile.theta = parseInt($('#' + event.target.id)[0].style.transform.replace(/[^\d]/g, ''), 10);
+    // Do not pull any data from the div that wasn't changed by the event!  Thus no angles, 
+    // and nothing else either.  The following line was used to extract the angle.  We may 
+    // add angle adjustment to the GUI, in which case we may need this line again (and it was
+    // non-trivial to figure out.)
+    // tile.theta = parseInt($('#' + event.target.id)[0].style.transform.replace(/[^\d]/g, ''), 10);
     return tile;
 }
 

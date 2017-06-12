@@ -46,7 +46,7 @@ window.onload = function() {
     // ------------------------------------
     // Install callback responsible for handling dropping of tiles
     $(document).mouseup(function(event) {
-        reportTileUpdateToServer(retrieveTileDataFromHTML(event));
+        reportTileLocationToServer(retrieveTileLocationFromHTML(event));
         $('.moveTile').removeClass('moveTile');
     });
 
@@ -103,24 +103,17 @@ window.onload = function() {
 // ===============================================
 // ===============================================
 // Send updated tile position through the socket back to the database
-function reportTileUpdateToServer(tile) {
+function reportTileLocationToServer(tile) {
     var new_x = Math.round(tile.x*scale_factor);
     var new_y = Math.round(tile.y*scale_factor);
 
-    console.log("Sending 'broadcast': update tile_id " + tile.tile_id + " at " + new_x + " " + new_y 
-        + " with theta " + tile.theta + " etc...");
+    console.log("Sending 'broadcast': update tile_id " + tile.tile_id + " at " + new_x + " " + new_y);
 
     var data = {
-        op: 'u',
+        op: 'l',  // op 'l' refers to a location-only update.
         tile_id: tile.tile_id,
         x: new_x,
         y: new_y,
-        dimx: tile.dimx,
-        dimy: tile.dimy,
-        theta: tile.theta,
-        color: tile.color,
-        userRef: tile.userRef,
-        userLabel: tile.userLabel
     };
 
     socket.emit('broadcast', data);
