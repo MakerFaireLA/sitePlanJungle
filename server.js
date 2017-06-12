@@ -69,7 +69,7 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
                 // ------------------------------
                 // Update operation implementation
                 console.log("Received: 'broadcast' => update tile_id " + data.tile_id + " to " + data.x + " " + data.y 
-                    + " and theta " + data.theta);
+                    + " and theta " + data.theta + " etc...");
 
                 db.collection(process.env.MONGODB_COLLECTION).updateOne(
                     { "tile_id": data.tile_id },
@@ -79,7 +79,9 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
                                 'x': data.x,
                                 'y': data.y
                             },
-                            "theta": data.theta
+                            "theta": data.theta,
+                            "userRef": data.userRef,
+                            "userLabel": data.userLabel
                         }
                     }, function (err) {
                         if (err) {
@@ -95,10 +97,11 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
                 // ------------------------------
                 // Create operation implementation
                 console.log("Received: 'broadcast' => create tile_id " + data.tile_id + " at " + data.x + " " + data.y 
-                    + " with theta " + data.theta);
+                    + " with theta " + data.theta + " etc...");
 
                 db.collection(process.env.MONGODB_COLLECTION).insertOne(
-                    {'tile_id': data.tile_id, 'location':{'x': data.x, 'y':data.y}, 'theta': data.theta},
+                    {'tile_id': data.tile_id, 'location':{'x': data.x, 'y':data.y}, 'theta': data.theta, 
+                    'userRef': data.userRef, 'userLabel': data.userLabel},
                     function(err) {
                         if(err) {
                             console.log("Error: Unable to insert new tile in database for tile_id " + data.tile_id);
@@ -142,7 +145,9 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
                                 tile_id: data.tile_id,
                                 x: data.x,
                                 y: data.y,
-                                theta: data.theta
+                                theta: data.theta,
+                                userRef: data.userRef,
+                                userLabel: data.userLabel
                             };
 
                             socket.emit('broadcast', update);
@@ -164,7 +169,8 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
                     throw err;
                 } else {
                     for (var key in res) {
-                        sendTileInitData(socket, res[key].tile_id, res[key].location.x, res[key].location.y, res[key].theta);
+                        sendTileInitData(socket, res[key].tile_id, res[key].location.x, res[key].location.y, res[key].theta,
+                            res[key].userRef, res[key].userLabel);
                     }
                 }
             });
@@ -179,16 +185,18 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
 
 // ===============================================
 // Send client tile initialization data
-function sendTileInitData(tunnel, tile_id_Arg, xArg, yArg, thetaArg) {
+function sendTileInitData(tunnel, tile_id_Arg, xArg, yArg, thetaArg, userRefArg, userLabelArg) {
     console.log("Send 'broadcast' => initialize (op = 'c') tile_id " + tile_id_Arg + " at " + xArg + " " + yArg
-        + " with theta " + thetaArg);
+        + " with theta " + thetaArg + " etc...");
 
     var data = {
         op: 'c',
         tile_id: tile_id_Arg,
         x: xArg,
         y: yArg,
-        theta: thetaArg
+        theta: thetaArg,
+        userRef: userRefArg,
+        userLabel: userLabelArg
     };
 
     tunnel.emit('broadcast', data);

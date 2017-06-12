@@ -64,7 +64,7 @@ window.onload = function() {
             // ------------------------------
             // Update operation implementation
             console.log("Received: 'broadcast' => update tile_id " + data.tile_id + " to " + data.x + " " + data.y 
-                + " with theta " + data.theta);
+                + " with theta " + data.theta + " etc...");
 
             // @TODO - Implement an update operation here.  Using renderTile() is incorrect.  We could call moveTile
             //   except that it does not handle changes in theta.
@@ -74,7 +74,7 @@ window.onload = function() {
             // ------------------------------
             // Create operation implementation
             console.log("Received: 'broadcast' => create (op = 'c') tile_id " + data.tile_id + " at " + data.x + " " 
-                + data.y + " with theta " + data.theta);
+                + data.y + " with theta " + data.theta + " etc...");
 
             renderTile(data);
 
@@ -108,14 +108,16 @@ function reportTileUpdateToServer(tile) {
     var new_y = Math.round(tile.y*scale_factor);
 
     console.log("Sending 'broadcast': update tile_id " + tile.tile_id + " at " + new_x + " " + new_y 
-        + " with theta " + tile.theta);
+        + " with theta " + tile.theta + " etc...");
 
     var data = {
         op: 'u',
         tile_id: tile.tile_id,
         x: new_x,
         y: new_y,
-        theta: tile.theta
+        theta: tile.theta,
+        userRef: tile.userRef,
+        userLabel: tile.userLabel
     };
 
     socket.emit('broadcast', data);
