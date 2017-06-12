@@ -62,7 +62,7 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
             if(!('op' in data)) {
                 console.log("Error: 'broadcast' => data received with unspecified operation (no op found).");
                 // @TODO - Should probably throw an error here if the op param is not found in data.
-                // @TODO - Need to check that value of 'op' is 'c', 'r', 'u' or 'd' and if not, throw an error.
+                // @TODO - Need to check that value of 'op' is 'c', 'r', 'u', 'l' or 'd' and if not, throw an error.
                 //     Or perhaps I should just use a switch statement and have the default throw an error.
 
             } else if(data.op == 'u') {
@@ -87,6 +87,30 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
                             "color": data.color,
                             "userRef": data.userRef,
                             "userLabel": data.userLabel
+                        }
+                    }, function (err) {
+                        if (err) {
+                            console.log("Error: Unable to update database for tile_id " + data.tile_id);
+                            throw err;
+                        } else {
+                            // Send it to all other clients
+                            socket.broadcast.emit('broadcast', data);
+                        }
+                    });
+
+            } else if(data.op == 'l') {
+                // ------------------------------
+                // Location-only update operation implementation
+                console.log("Received: 'broadcast' => update (op = l) tile_id " + data.tile_id + " to " + data.x + " " + data.y);
+
+                db.collection(process.env.MONGODB_COLLECTION).updateOne(
+                    { "tile_id": data.tile_id },
+                    {
+                        $set: {
+                            "location": {
+                                'x': data.x,
+                                'y': data.y
+                            }
                         }
                     }, function (err) {
                         if (err) {
