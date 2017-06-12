@@ -115,6 +115,8 @@ function reportTileUpdateToServer(tile) {
         tile_id: tile.tile_id,
         x: new_x,
         y: new_y,
+        dimx: tile.dimx,
+        dimy: tile.dimy,
         theta: tile.theta,
         userRef: tile.userRef,
         userLabel: tile.userLabel
