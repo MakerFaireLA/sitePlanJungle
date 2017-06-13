@@ -46,7 +46,7 @@ window.onload = function() {
     // ------------------------------------
     // Install callback responsible for handling dropping of tiles
     $(document).mouseup(function(event) {
-        reportTileLocationToServer(retrieveTileLocationFromHTML(event));
+        reportTileLocationToServer(retrieveTileLocationViaEvent(event));
         $('.moveTile').removeClass('moveTile');
     });
 
