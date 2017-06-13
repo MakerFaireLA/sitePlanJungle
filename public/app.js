@@ -143,6 +143,20 @@ function reportTileLocationToServer(tile) {
 }
 
 // ===============================================
+// Send updated tile angle to the database
+function reportTileLocationToServer(tile) {
+    console.log("Sending 'broadcast': update tile_id " + tile.tile_id + " with theta " + tile.theta);
+
+    var data = {
+        op: 'a',  // op 'a' refers to an angle-only update.
+        tile_id: tile.tile_id,
+        theta: tile.theta
+    };
+
+    socket.emit('broadcast', data);
+}
+
+// ===============================================
 // Send message on server channel requesting update on ALL tiles 
 function requestAllTiles() {
     console.log("Sending: 'server' => requesting initialization on all tiles");
