@@ -55,22 +55,24 @@ window.onload = function() {
     });
 
     // ------------------------------------
-    // Install keyboard listener to handle tile nudging commands
-    $(document).onkeypress = function(event) {
-        var tile = {};
-        var keycode = event.keyCode ? event.keyCode : event.which;
-        switch(keycode) {
-            case 38: // up key
-                tile = nudgeTile(lastClickedId, 'up');
-                break;
-            default:
-                // do nothing - no assigned key pressed
-        };
-        tile.location.x = tile.screen.x*scale_factor;
-        tile.location.y = tile.screen.y*scale_factor;
+    // Install keyboard listeners to handle tile nudging commands
+    Mousetrap.bind('ctrl+w', function() {
+        var tile = nudgeTile(lastClickedId, 'up');
         reportTileLocationToServer(tile);
-    }
-
+    });
+    Mousetrap.bind('ctrl+s', function() {
+        var tile = nudgeTile(lastClickedId, 'down');
+        reportTileLocationToServer(tile);
+    });
+    Mousetrap.bind('ctrl+a', function() {
+        var tile = nudgeTile(lastClickedId, 'left');
+        reportTileLocationToServer(tile);
+    }); 
+    Mousetrap.bind('ctrl+d', function() {
+        var tile = nudgeTile(lastClickedId, 'right');
+        reportTileLocationToServer(tile);
+    });   
+    
     // ------------------------------------
     // 'broadcast' channel listener
     //     supports all CRUD operations
