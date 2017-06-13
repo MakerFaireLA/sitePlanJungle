@@ -122,6 +122,27 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
                         }
                     });
 
+            } else if(data.op == 'a') {
+                // ------------------------------
+                // Angle-only update operation implementation
+                console.log("Received: 'broadcast' => update (op = a) tile_id " + data.tile_id + " to theta " + data.theta);
+
+                db.collection(process.env.MONGODB_COLLECTION).updateOne(
+                    { "tile_id": data.tile_id },
+                    {
+                        $set: {
+                            'theta': data.theta
+                        }
+                    }, function (err) {
+                        if (err) {
+                            console.log("Error: Unable to update database for tile_id " + data.tile_id);
+                            throw err;
+                        } else {
+                            // Send it to all other clients
+                            socket.broadcast.emit('broadcast', data);
+                        }
+                    });
+
             } else if(data.op == 'c') {
                 // ------------------------------
                 // Create operation implementation
