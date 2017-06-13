@@ -35,27 +35,35 @@ function renderTile(tile) {
 //
 // Returns the updated short tile struct.
 function nudgeTile(tile_id, direction) {
-    // first get tile's current location
-    var tile = retrieveTileLocationFromHTML(tile_id);
-
-    // now nudge it
     switch(direction) {
         case 'up':
+            tile = retrieveTileLocationFromHTML(tile_id);
             $('#id-' + tile_id).css('top', tile.screen.y-1);
             tile.screen.y -= 1;
             break;
         case 'down':
+            tile = retrieveTileLocationFromHTML(tile_id);
             $('#id-' + tile_id).css('top', tile.screen.y+1);
             tile.screen.y += 1;
             break;
         case 'left':
+            tile = retrieveTileLocationFromHTML(tile_id);
             $('#id-' + tile_id).css('left', tile.screen.x-1);
             tile.screen.x -= 1;
             break;
         case 'right':
+            tile = retrieveTileLocationFromHTML(tile_id);
             $('#id-' + tile_id).css('left', tile.screen.x+1);
             tile.screen.x += 1;
             break;
+        case 'ccw':
+            tile = retrieveTileAngleFromHTML(tile_id);
+            $('#id-' + tile_id).css('transform', `rotateZ(${tile.theta-1}deg)`);
+            break;
+        case 'cw':
+            tile = retrieveTileAngleFromHTML(tile_id);
+            $('#id-' + tile_id).css('transform', `rotateZ(${tile.theta+1}deg)`);
+            break;        
         default:
             console.log("Illegal nudge operation selected.");
     };
@@ -87,5 +95,14 @@ function retrieveTileLocationFromHTML(tile_id) {
     tile.screen = {};
     tile.screen.x = parseInt($('#id-' + tile_id).css('left'), 10);
     tile.screen.y = parseInt($('#id-' + tile_id).css('top'), 10);
+    return tile;
+}
+
+// ===============================================
+// Given a tile_id, return a tile struct containing limited tile data, i.e. only the tile_id
+// and the new angle.
+function retrieveTileAngleFromHTML(tile_id) {
+    var tile = {'tile_id':tile_id};
+    tile.theta = parseInt($('#id-' + tile_id)[0].style.transform.replace(/[^\d]/g, ''), 10);
     return tile;
 }

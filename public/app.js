@@ -71,7 +71,15 @@ window.onload = function() {
     Mousetrap.bind('ctrl+d', function() {
         var tile = nudgeTile(lastClickedId, 'right');
         reportTileLocationToServer(tile);
-    });   
+    });  
+    Mousetrap.bind('ctrl+q', function() {
+        var tile = nudgeTile(lastClickedId, 'ccw'); // counter-clockwise
+        reportTileAngleToServer(tile);
+    });
+    Mousetrap.bind('ctrl+e', function() {
+        var tile = nudgeTile(lastClickedId, 'cw'); // clockwise
+        reportTileAngleToServer(tile);
+    });
     
     // ------------------------------------
     // 'broadcast' channel listener
@@ -125,7 +133,7 @@ window.onload = function() {
 
 // ===============================================
 // ===============================================
-// Send updated tile position through the socket back to the database
+// Send updated tile position through the socket back to the server
 function reportTileLocationToServer(tile) {
     var new_x = Math.round(tile.screen.x*scale_factor);
     var new_y = Math.round(tile.screen.y*scale_factor);
