@@ -83,7 +83,7 @@ function retrieveTileLocationViaEvent(event) {
 // Given a tile_id, return a tile struct containing limited tile data, i.e. only the tile_id
 // and the new location.
 function retrieveTileLocationFromHTML(tile_id) {
-    var tile = {};
+    var tile = {'tile_id':tile_id};
     tile.screen = {};
     tile.screen.x = parseInt($('#id-' + tile_id).css('left'), 10);
     tile.screen.y = parseInt($('#id-' + tile_id).css('top'), 10);
