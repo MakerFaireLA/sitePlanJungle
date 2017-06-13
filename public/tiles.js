@@ -68,6 +68,7 @@ function nudgeTile(tile_id, direction) {
 function retrieveTileLocationViaEvent(event) {
     var tile = {};
     tile.tile_id = parseInt(event.target.id.replace(/[^\d]/g, ''), 10);
+    tile.screen = {};
     tile.screen.x = parseInt($('#' + event.target.id).css('left'), 10);
     tile.screen.y = parseInt($('#' + event.target.id).css('top'), 10);
     // Do not pull any data from the div that wasn't changed by the event!  Thus no angles, 
@@ -83,6 +84,7 @@ function retrieveTileLocationViaEvent(event) {
 // and the new location.
 function retrieveTileLocationFromHTML(tile_id) {
     var tile = {};
+    tile.screen = {};
     tile.screen.x = parseInt($('#id-' + tile_id).css('left'), 10);
     tile.screen.y = parseInt($('#id-' + tile_id).css('top'), 10);
     return tile;
