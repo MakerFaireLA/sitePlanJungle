@@ -42,14 +42,3 @@ function retrieveTileLocationFromHTML(event) {
     // tile.theta = parseInt($('#' + event.target.id)[0].style.transform.replace(/[^\d]/g, ''), 10);
     return tile;
 }
-
-// ===============================================
-// Our tiles array may have holes (the sites of previous deletions), in which case tiles.length will be inaccurate.  
-// This function will return the correct result despite holes.
-function countElements(array) {
-    var elemCount = 0;
-    array.forEach(function() {
-        elemCount++;
-    });
-    return elemCount;
-}
