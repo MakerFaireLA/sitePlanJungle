@@ -29,7 +29,7 @@ function renderTile(tile) {
 // ===============================================
 // Given a 'event' associated with a tile, return a tile struct containing limited 
 //   tile data, i.e. only the tile_id and the new location.
-function retrieveTileLocationFromHTML(event) {
+function retrieveTileLocationViaEvent(event) {
     var tile = {};
     tile.tile_id = parseInt(event.target.id.replace(/[^\d]/g, ''), 10);
     tile.x = parseInt($('#' + event.target.id).css('left'), 10);
