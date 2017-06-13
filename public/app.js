@@ -143,8 +143,8 @@ function reportTileLocationToServer(tile) {
 }
 
 // ===============================================
-// Send updated tile angle to the database
-function reportTileLocationToServer(tile) {
+// Send updated tile angle to the server
+function reportTileAngleToServer(tile) {
     console.log("Sending 'broadcast': update tile_id " + tile.tile_id + " with theta " + tile.theta);
 
     var data = {
