@@ -10,6 +10,10 @@ var aspect_ratio = image_size_pixels.y/image_size_pixels.x;
 console_size_phys.y = aspect_ratio*console_size_phys.x;
 var scale_factor = console_size_phys.x/image_size_pixels.x /* mm/pixel */;
 
+// Keeps track of the tile_id on which mousedown() was last triggered.  Effectively this is our
+// selected tile.
+var lastClickedId;
+
 // These two unfortunate globals keep track of the offset when the user picks up a tile
 // to drag it.  Since only one element can be dragged at a time I don't anticipate any 
 // issue with keeping a single copy of the data as a global.
@@ -49,6 +53,23 @@ window.onload = function() {
         reportTileLocationToServer(retrieveTileLocationViaEvent(event));
         $('.moveTile').removeClass('moveTile');
     });
+
+    // ------------------------------------
+    // Install keyboard listener to handle tile nudging commands
+    $(document).onkeypress = function(event) {
+        var tile = {};
+        var keycode = event.keyCode ? event.keyCode : event.which;
+        switch(keycode) {
+            case 38: // up key
+                tile = nudgeTile(lastClickedId, 'up');
+                break;
+            default:
+                // do nothing - no assigned key pressed
+        };
+        tile.location.x = tile.screen.x*scale_factor;
+        tile.location.y = tile.screen.y*scale_factor;
+        reportTileLocationToServer(tile);
+    }
 
     // ------------------------------------
     // 'broadcast' channel listener
@@ -104,8 +125,8 @@ window.onload = function() {
 // ===============================================
 // Send updated tile position through the socket back to the database
 function reportTileLocationToServer(tile) {
-    var new_x = Math.round(tile.x*scale_factor);
-    var new_y = Math.round(tile.y*scale_factor);
+    var new_x = Math.round(tile.screen.x*scale_factor);
+    var new_y = Math.round(tile.screen.y*scale_factor);
 
     console.log("Sending 'broadcast': update tile_id " + tile.tile_id + " at " + new_x + " " + new_y);
 

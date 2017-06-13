@@ -12,6 +12,8 @@ function renderTile(tile) {
     $('.container').append(html);
 
     $('#id-' + tile.tile_id).mousedown(function(event) {
+        lastClickedId = parseInt(event.target.id.replace(/[^\d]/g, ''), 10);
+        console.log("lastClickedId updated to " + lastClickedId);
         grab_deltax = event.pageX - parseInt($(event.target).css('left'), 10);
         grab_deltay = event.pageY - parseInt($(event.target).css('top'), 10);
         $(event.target).addClass('moveTile');
@@ -27,17 +29,61 @@ function renderTile(tile) {
 // }
 
 // ===============================================
+// Takes instructions in the form of a short string, i.e. 'up', 'down', 'left', 
+// 'right' (typically corresponding to the arrow keys), along with a tile_id 
+// to act upon, and nudges the tile one pixel in the direction indicated.
+//
+// Returns the updated short tile struct.
+function nudgeTile(tile_id, direction) {
+    // first get tile's current location
+    var tile = retrieveTileLocationFromHTML(tile_id);
+
+    // now nudge it
+    switch(direction) {
+        case 'up':
+            $('#id-' + tile_id).css('top', tile.screen.y-1);
+            tile.screen.y -= 1;
+            break;
+        case 'down':
+            $('#id-' + tile_id).css('top', tile.screen.y+1);
+            tile.screen.y += 1;
+            break;
+        case 'left':
+            $('#id-' + tile_id).css('left', tile.screen.x-1);
+            tile.screen.x -= 1;
+            break;
+        case 'right':
+            $('#id-' + tile_id).css('left', tile.screen.x+1);
+            tile.screen.x += 1;
+            break;
+        default:
+            console.log("Illegal nudge operation selected.");
+    };
+    return tile;
+}
+
+// ===============================================
 // Given a 'event' associated with a tile, return a tile struct containing limited 
 //   tile data, i.e. only the tile_id and the new location.
 function retrieveTileLocationViaEvent(event) {
     var tile = {};
     tile.tile_id = parseInt(event.target.id.replace(/[^\d]/g, ''), 10);
-    tile.x = parseInt($('#' + event.target.id).css('left'), 10);
-    tile.y = parseInt($('#' + event.target.id).css('top'), 10);
+    tile.screen.x = parseInt($('#' + event.target.id).css('left'), 10);
+    tile.screen.y = parseInt($('#' + event.target.id).css('top'), 10);
     // Do not pull any data from the div that wasn't changed by the event!  Thus no angles, 
     // and nothing else either.  The following line was used to extract the angle.  We may 
     // add angle adjustment to the GUI, in which case we may need this line again (and it was
     // non-trivial to figure out.)
     // tile.theta = parseInt($('#' + event.target.id)[0].style.transform.replace(/[^\d]/g, ''), 10);
+    return tile;
+}
+
+// ===============================================
+// Given a tile_id, return a tile struct containing limited tile data, i.e. only the tile_id
+// and the new location.
+function retrieveTileLocationFromHTML(tile_id) {
+    var tile = {};
+    tile.screen.x = parseInt($('#id-' + tile_id).css('left'), 10);
+    tile.screen.y = parseInt($('#id-' + tile_id).css('top'), 10);
     return tile;
 }
