@@ -3,7 +3,7 @@
 var socket;
 
 // The following items had to be moved up here simply so that scale_factor would be global and thus 
-// it would be available in the ongoingDrag function.  God I hate pre-prototyped functions.
+// it would be available in all the functions.
 var image_size_pixels = {'x': 3024, 'y': 2160};
 var console_size_phys = {'x':300000 /* mm */};
 var aspect_ratio = image_size_pixels.y/image_size_pixels.x;
