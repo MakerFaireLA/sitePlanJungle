@@ -4,8 +4,14 @@ jQuery(function($, undefined) {
             try {
                 // var result = window.eval(command);
                 var result = peg$parse(command);
-                if (result !== undefined) {
-                    this.echo(new String(result));
+                switch(result.op) {
+                    case delLC: // 'delete lastClicked'
+                        var tile = deleteTileHTML(lastClickedId);
+                        reportTileDeletionToServer(tile);
+                        break;
+                    default:
+                        // @TODO - If we get here there is a bug!  The parser should never pass an illegal 
+                        //   command.  We devs must have screwed up.
                 }
             } catch(e) {
                 this.error(new String(e));
