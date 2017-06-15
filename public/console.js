@@ -4,8 +4,9 @@ jQuery(function($, undefined) {
             try {
                 // var result = window.eval(command);
                 var result = peg$parse(command);
+                // this.echo(result.op);
                 switch(result.op) {
-                    case delLC: // 'delete lastClicked'
+                    case 'delLC': // 'delete lastClicked'
                         var tile = deleteTileHTML(lastClickedId);
                         reportTileDeletionToServer(tile);
                         break;
