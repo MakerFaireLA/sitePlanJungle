@@ -11,6 +11,10 @@ function renderTile(tile) {
         background: ${tile.color};">${tile.userRef}<br>${tile.userLabel}</div>`;
     $('.container').append(html);
 
+    if(tile.tile_id > max_tile_id) {
+        max_tile_id = tile.tile_id;
+    }
+
     $('#id-' + tile.tile_id).mousedown(function(event) {
         lastClickedId = parseInt(event.target.id.replace(/[^\d]/g, ''), 10);
         console.log("lastClickedId updated to " + lastClickedId);
@@ -111,6 +115,13 @@ function retrieveTileAngleFromHTML(tile_id) {
 // Delete a tile from the GUI given its tile_id.  Returns a limited tile struct.
 function deleteTileHTML(tile_id) {
     $('#id-' + tile_id).remove();
+    if(tile_id === max_tile_id) {
+        max_tile_id--;
+        // There's no guarantee that simply decrementing max_tile_id is correct.  OTOH,
+        //   we only need to maintain rough bounds here.
+        // @TODO - fix this once I've implemented a front-end array of current tile_id's
+        //   or a scan of div's.
+    }
     var tile = {'tile_id':tile_id};
     return tile;
 }

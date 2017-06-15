@@ -14,6 +14,11 @@ var scale_factor = console_size_phys.x/image_size_pixels.x /* mm/pixel */;
 // selected tile.
 var lastClickedId;
 
+// There are times when we must perform an order N scan of all the tiles in the system.
+// To perform this operation we need to know the bounds 0, ... , id_max of all tiles.
+// Let's keep track of id_max on the fly.
+var max_tile_id = 0;
+
 // These two unfortunate globals keep track of the offset when the user picks up a tile
 // to drag it.  Since only one element can be dragged at a time I don't anticipate any 
 // issue with keeping a single copy of the data as a global.
