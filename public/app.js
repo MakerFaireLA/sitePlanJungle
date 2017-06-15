@@ -165,6 +165,19 @@ function reportTileAngleToServer(tile) {
 }
 
 // ===============================================
+// Report tile deletion to the server
+function reportTileDeletionToServer(tile) {
+    console.log("Sending 'broadcast': deleted tile_id " + tile.tile_id);
+
+    var data = {
+        op: 'd',  // op 'd' for delete
+        tile_id: tile.tile_id
+    };
+
+    socket.emit('broadcast', data);
+}
+
+// ===============================================
 // Send message on server channel requesting update on ALL tiles 
 function requestAllTiles() {
     console.log("Sending: 'server' => requesting initialization on all tiles");

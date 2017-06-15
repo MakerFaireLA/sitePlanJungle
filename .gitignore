@@ -2,4 +2,6 @@
 node_modules/
 .vscode/
 .env
+*.log
 public/user_command_grammar.js
+
