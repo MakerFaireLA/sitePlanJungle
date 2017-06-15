@@ -5,9 +5,9 @@
 // Inserts HTML for rendering a tile 
 //   To be called everytime a tile is added, moved, or otherwise modified.
 function renderTile(tile) {
-    const html = `<div id="id-${tile.tile_id}" class="tile" style="left: ${Math.round(tile.x/scale_factor)}px; 
-        top: ${Math.round(tile.y/scale_factor)}px; transform: rotateZ(${tile.theta}deg); 
-        height: ${Math.round(tile.dimy/scale_factor)}px; width: ${Math.round(tile.dimx/scale_factor)}px;
+    const html = `<div id="id-${tile.tile_id}" class="tile" style="left: ${Math.round(tile.location.x/scale_factor)}px; 
+        top: ${Math.round(tile.location.y/scale_factor)}px; transform: rotateZ(${tile.theta}deg); 
+        height: ${Math.round(tile.dimensions.y/scale_factor)}px; width: ${Math.round(tile.dimensions.x/scale_factor)}px;
         background: ${tile.color};">${tile.userRef}<br>${tile.userLabel}</div>`;
     $('.container').append(html);
 

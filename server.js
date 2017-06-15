@@ -245,16 +245,20 @@ function sendTileInitData(tunnel, tile_id_Arg, xArg, yArg, dimxArg, dimyArg, the
         + " with theta " + thetaArg + " etc...");
 
     var data = {
-        op: 'c',
-        tile_id: tile_id_Arg,
-        x: xArg,
-        y: yArg,
-        dimx: dimxArg,
-        dimy: dimyArg,
-        theta: thetaArg,
-        color: colorArg,
-        userRef: userRefArg,
-        userLabel: userLabelArg
+        'op': 'c',
+        'tile_id': tile_id_Arg,
+        'location': {
+            'x': xArg,
+            'y': yArg
+        },
+        'dimensions': {
+            'x': dimxArg,
+            'y': dimyArg
+        },
+        'theta': thetaArg,
+        'color': colorArg,
+        'userRef': userRefArg,
+        'userLabel': userLabelArg
     };
 
     tunnel.emit('broadcast', data);

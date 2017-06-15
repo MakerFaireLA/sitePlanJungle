@@ -109,8 +109,8 @@ window.onload = function() {
         } else if(data.op == 'c') {
             // ------------------------------
             // Create operation implementation
-            console.log("Received: 'broadcast' => create (op = 'c') tile_id " + data.tile_id + " at " + data.x + " " 
-                + data.y + " with theta " + data.theta + " etc...");
+            console.log("Received: 'broadcast' => create (op = 'c') tile_id " + data.tile_id + " at " + data.location.x 
+                + " " + data.location.y + " with theta " + data.theta + " etc...");
 
             renderTile(data);
 
