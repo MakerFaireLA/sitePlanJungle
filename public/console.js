@@ -17,6 +17,7 @@ jQuery(function($, undefined) {
         // greetings: 'Javascript Interpreter',
         greetings: 'Console:',
         name: 'type commands here:',
-        prompt: 'cnsl> '
+        prompt: 'cnsl> ',
+        scrollOnEcho: true
     });
 });
