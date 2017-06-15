@@ -106,3 +106,11 @@ function retrieveTileAngleFromHTML(tile_id) {
     tile.theta = parseInt($('#id-' + tile_id)[0].style.transform.replace(/[^\d]/g, ''), 10);
     return tile;
 }
+
+// ===============================================
+// Delete a tile from the GUI given its tile_id.  Returns a limited tile struct.
+function deleteTileHTML(tile_id) {
+    $('#id-' + tile_id).remove();
+    var tile = {'tile_id':tile_id};
+    return tile;
+}
