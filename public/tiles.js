@@ -125,3 +125,24 @@ function deleteTileHTML(tile_id) {
     var tile = {'tile_id':tile_id};
     return tile;
 }
+
+// ===============================================
+// Takes a userRef string, splits it on the separation character, checks if the head 
+// matches the prefix and if so returns the value extracted from the tail, otherwise 
+// it returns 'undefined'. The separation character is taken to be the last character 
+// in the prefix.
+// 
+// For example, if the userRef is 'Ex-26' (for the exhibitor 26 tile) and the prefix 
+// is 'Ex-', the code will detect a match and return the value 26.
+function splitAndCompareUserRef(userRefPrefix, userRef) {
+    const separator = userRefPrefix.charAt(-1);
+
+    var sample = userRef.split(separator);
+    // @TODO - must check that only 2 pieces came out of the split
+    var testPrefix = sample[0] + separator;
+    if(testPrefix == userRefPrefix) {
+        return parseInt(sample[-1], 10);
+    } else {
+        return undefined;
+    }
+}
