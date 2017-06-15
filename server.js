@@ -146,12 +146,12 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
             } else if(data.op == 'c') {
                 // ------------------------------
                 // Create operation implementation
-                console.log("Received: 'broadcast' => create tile_id " + data.tile_id + " at " + data.x + " " + data.y 
-                    + " with theta " + data.theta + " etc...");
+                console.log("Received: 'broadcast' => create tile_id " + data.tile_id + " at " + data.location.x + " " 
+                    + data.location.y + " with theta " + data.theta + " etc...");
 
                 db.collection(process.env.MONGODB_COLLECTION).insertOne(
-                    {'tile_id': data.tile_id, 'location':{'x': data.x, 'y':data.y}, 'theta': data.theta, 
-                    'dimensions':{'x': data.dimx, 'y': data.dimy}, 'color': data.color,
+                    {'tile_id': data.tile_id, 'location':{'x': data.location.x, 'y':data.location.y}, 'theta': data.theta, 
+                    'dimensions':{'x': data.dimensions.x, 'y': data.dimensions.y}, 'color': data.color,
                     'userRef': data.userRef, 'userLabel': data.userLabel},
                     function(err) {
                         if(err) {
