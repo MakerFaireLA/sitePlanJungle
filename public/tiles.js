@@ -95,7 +95,7 @@ function retrieveTileLocationViaEvent(event) {
 // Extracts the full set of tile data from the HTML given a tile_id and returns it as the 
 // standard tile struct.  
 //
-// WARNING:  For the moment, extraction of userRef and userLabel is broken.  Don't rely on 
+// WARNING:  For the moment, extraction of color, userRef and userLabel is broken.  Don't rely on 
 // it.
 function extractTileDataFromHTML(tile_id) {
     var tile = {'tile_id':tile_id};
@@ -103,19 +103,22 @@ function extractTileDataFromHTML(tile_id) {
     tile.screen.x = parseInt($('#id-' + tile_id).css('left'), 10);
     tile.screen.y = parseInt($('#id-' + tile_id).css('top'), 10);
     tile.location = {};
-    tile.location.x = tile.screen.x*scale_factor;
-    tile.location.y = tile.screen.y*scale_factor;
+    tile.location.x = Math.round(tile.screen.x*scale_factor);
+    tile.location.y = Math.round(tile.screen.y*scale_factor);
     tile.screendim = {};
     tile.screendim.x = parseInt($('#id-' + tile_id).css('width'), 10);
     tile.screendim.y = parseInt($('#id-' + tile_id).css('height'), 10);
     tile.dimensions = {};
-    tile.dimensions.x = tile.screendim.x*scale_factor;
-    tile.dimensions.y = tile.screendim.y*scale_factor;
+    tile.dimensions.x = Math.round(tile.screendim.x*scale_factor);
+    tile.dimensions.y = Math.round(tile.screendim.y*scale_factor);
     tile.theta = parseInt($('#id-' + tile_id)[0].style.transform.replace(/[^\d]/g, ''), 10);
-    tile.color = $('#id-' + tile_id).css('background');
+    tile.color = '';
+    // tile.color = $('#id-' + tile_id).css('background');
+    // @TODO - fix the extraction of the color.
     tile.userRef = $('#id-' + tile_id).text();
     tile.userLabel = '';
     // @TODO - fix the extraction of userRef and userLabel.
+    return tile;
 }
 
 // ===============================================
