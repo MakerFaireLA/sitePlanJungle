@@ -3,10 +3,10 @@ start
     = dupLCInc / delLC
 
 delLC "'del lastClicked'" 
-    = "del" space "lastClicked" { return {'op':'dellc'} }
+    = "del" space "lastClicked" { return {'op':'delLC'} }
 
 dupLCInc "'dup lastClicked inc'" 
-    = "dup" space "lastClicked" space "inc" { return {'op':'duplci'} }
+    = "dup" space "lastClicked" space "inc" { return {'op':'dupLCInc'} }
 
 space 
     = " "
