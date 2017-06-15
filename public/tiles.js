@@ -135,13 +135,13 @@ function deleteTileHTML(tile_id) {
 // For example, if the userRef is 'Ex-26' (for the exhibitor 26 tile) and the prefix 
 // is 'Ex-', the code will detect a match and return the value 26.
 function splitAndCompareUserRef(userRefPrefix, userRef) {
-    const separator = userRefPrefix.charAt(-1);
+    const separator = userRefPrefix.charAt(userRefPrefix.length-1);
 
     var sample = userRef.split(separator);
     // @TODO - must check that only 2 pieces came out of the split
     var testPrefix = sample[0] + separator;
     if(testPrefix == userRefPrefix) {
-        return parseInt(sample[-1], 10);
+        return parseInt(sample[sample.length-1], 10);
     } else {
         return undefined;
     }
