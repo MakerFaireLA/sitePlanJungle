@@ -138,6 +138,17 @@ window.onload = function() {
 
 // ===============================================
 // ===============================================
+// Report creation of new tile to the server
+function reportTileCreationToServer(tile) {
+    console.log("Sending 'broadcast': created tile_id " + tile.tile_id + " at " + tile.location.x + " " 
+        + tile.location.y);
+
+    tile.op = 'c';
+
+    socket.emit('broadcast', tile);
+}
+
+// ===============================================
 // Send updated tile position through the socket back to the server
 function reportTileLocationToServer(tile) {
     var new_x = Math.round(tile.screen.x*scale_factor);
