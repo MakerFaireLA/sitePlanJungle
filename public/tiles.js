@@ -182,7 +182,7 @@ function splitAndCompareUserRef(userRefPrefix, userRef) {
 // returns the highest value it finds.  The minimum it returns is zero.
 function findHighestValueUserRef(userRefPrefix) {
     var maxRefVal = 0;
-    for(var i = 0; i < max_tile_id; i++) {
+    for(var i = 0; i <= max_tile_id; i++) {
         try {
             var currRefVal = parseInt(splitAndCompareUserRef(userRefPrefix, $('#id-' + i).text()), 10);
             if(currRefVal > maxRefVal) {
