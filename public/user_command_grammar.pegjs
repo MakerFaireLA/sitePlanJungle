@@ -1,12 +1,12 @@
 
 start
-    = dupInc / delLC
+    = dupLCInc / delLC
 
 delLC "'del lastClicked'" 
     = "del" space "lastClicked" { return {'op':'delLC'} }
 
-dupInc "'dup increment'" 
-    = "dup" space "increment" { return {'op':'dupInc'} }
+dupLCInc "'dup lastClicked++'" 
+    = "dup" space "lastClicked++" { return {'op':'dupLCInc'} }
 
 space 
     = " "
