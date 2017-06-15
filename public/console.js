@@ -28,6 +28,7 @@ jQuery(function($, undefined) {
                         tile.location.x += Math.round(tile.dimensions.x*1.5);
                         tile.location.y += Math.round(tile.dimensions.y*1.5);
                         renderTile(tile);
+                        reportTileCreationToServer(tile);
                         break;
                     default:
                         // @TODO - If we get here there is a bug!  The parser should never pass an illegal 
