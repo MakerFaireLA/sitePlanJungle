@@ -60,153 +60,170 @@ MongoClient.connect(process.env.MONGODB_URI, function (err, db) {
             // 'broadcast' channel listener
             //     supports all CRUD operations
             if(!('op' in data)) {
-                console.log("Error: 'broadcast' => data received with unspecified operation (no op found).");
-                // @TODO - Should probably throw an error here if the op param is not found in data.
-                // @TODO - Need to check that value of 'op' is 'c', 'r', 'u', 'l' or 'd' and if not, throw an error.
-                //     Or perhaps I should just use a switch statement and have the default throw an error.
+                console.log("Error: 'broadcast' => data received with unspecified operation" + 
+                    "(no op code specified).");
+                // @TODO - Should probably throw a real error here in this case.
+                return;
+            }
 
-            } else if(data.op == 'u') {
+            // switch statement to handle each 'op' code.
+            switch (data.op) {
                 // ------------------------------
-                // Update operation implementation
-                console.log("Received: 'broadcast' => update tile_id " + data.tile_id + " to " + data.x + " " + data.y 
-                    + " and theta " + data.theta + " etc...");
+                case 'u': // full tile data update
+                    console.log("Received: 'broadcast' => update tile_id " + data.tile_id + " to "
+                        + data.x + " " + data.y + " and theta " + data.theta + " etc...");
 
-                db.collection(process.env.MONGODB_COLLECTION).updateOne(
-                    { "tile_id": data.tile_id },
-                    {
-                        $set: {
-                            "location": {
-                                'x': data.x,
-                                'y': data.y
-                            },
-                            "dimensions": {
-                                'x': data.dimx,
-                                'y': data.dimy
-                            },
-                            "theta": data.theta,
-                            "color": data.color,
-                            "userRef": data.userRef,
-                            "userLabel": data.userLabel
-                        }
-                    }, function (err) {
-                        if (err) {
-                            console.log("Error: Unable to update database for tile_id " + data.tile_id);
-                            throw err;
-                        } else {
-                            // Send it to all other clients
-                            socket.broadcast.emit('broadcast', data);
-                        }
-                    });
-
-            } else if(data.op == 'l') {
-                // ------------------------------
-                // Location-only update operation implementation
-                console.log("Received: 'broadcast' => update (op = l) tile_id " + data.tile_id + " to " + data.x + " " + data.y);
-
-                db.collection(process.env.MONGODB_COLLECTION).updateOne(
-                    { "tile_id": data.tile_id },
-                    {
-                        $set: {
-                            "location": {
-                                'x': data.x,
-                                'y': data.y
+                    db.collection(process.env.MONGODB_COLLECTION).updateOne(
+                        { "tile_id": data.tile_id },
+                        {
+                            $set: {
+                                "location": {
+                                    'x': data.x,
+                                    'y': data.y
+                                },
+                                "dimensions": {
+                                    'x': data.dimx,
+                                    'y': data.dimy
+                                },
+                                "theta": data.theta,
+                                "color": data.color,
+                                "userRef": data.userRef,
+                                "userLabel": data.userLabel
                             }
-                        }
-                    }, function (err) {
-                        if (err) {
-                            console.log("Error: Unable to update database for tile_id " + data.tile_id);
-                            throw err;
-                        } else {
-                            // Send it to all other clients
-                            socket.broadcast.emit('broadcast', data);
-                        }
-                    });
+                        }, function (err) {
+                            if (err) {
+                                console.log("Error: Unable to update database for tile_id "
+                                    + data.tile_id);
+                                throw err;
+                            } else {
+                                // Send it to all other clients
+                                socket.broadcast.emit('broadcast', data);
+                            }
+                        });
+                    break;
 
-            } else if(data.op == 'a') {
                 // ------------------------------
-                // Angle-only update operation implementation
-                console.log("Received: 'broadcast' => update (op = a) tile_id " + data.tile_id + " to theta " + data.theta);
+                case 'l': // location only update
+                    console.log("Received: 'broadcast' => update (op = l) tile_id " + data.tile_id + " to "
+                        + data.x + " " + data.y);
 
-                db.collection(process.env.MONGODB_COLLECTION).updateOne(
-                    { "tile_id": data.tile_id },
-                    {
-                        $set: {
-                            'theta': data.theta
-                        }
-                    }, function (err) {
-                        if (err) {
-                            console.log("Error: Unable to update database for tile_id " + data.tile_id);
-                            throw err;
-                        } else {
-                            // Send it to all other clients
-                            socket.broadcast.emit('broadcast', data);
-                        }
-                    });
+                    db.collection(process.env.MONGODB_COLLECTION).updateOne(
+                        { "tile_id": data.tile_id },
+                        {
+                            $set: {
+                                "location": {
+                                    'x': data.x,
+                                    'y': data.y
+                                }
+                            }
+                        }, function (err) {
+                            if (err) {
+                                console.log("Error: Unable to update database for tile_id " + data.tile_id);
+                                throw err;
+                            } else {
+                                // Send it to all other clients
+                                socket.broadcast.emit('broadcast', data);
+                            }
+                        });
+                    break;
 
-            } else if(data.op == 'c') {
                 // ------------------------------
-                // Create operation implementation
-                console.log("Received: 'broadcast' => create tile_id " + data.tile_id + " at " + data.location.x + " " 
-                    + data.location.y + " with theta " + data.theta + " etc...");
+                case 'a': // angle only update
+                    console.log("Received: 'broadcast' => update (op = a) tile_id " + data.tile_id 
+                        + " to theta " + data.theta);
 
-                db.collection(process.env.MONGODB_COLLECTION).insertOne(
-                    {'tile_id': data.tile_id, 'location':{'x': data.location.x, 'y':data.location.y}, 'theta': data.theta, 
-                    'dimensions':{'x': data.dimensions.x, 'y': data.dimensions.y}, 'color': data.color,
-                    'userRef': data.userRef, 'userLabel': data.userLabel},
-                    function(err) {
-                        if(err) {
-                            console.log("Error: Unable to insert new tile in database for tile_id " + data.tile_id);
-                            throw err;
-                        } else {
-                            // Send it to all other clients
-                            socket.broadcast.emit('broadcast', data);
-                        }
-                    });
-            } else if(data.op == 'd') {
+                    db.collection(process.env.MONGODB_COLLECTION).updateOne(
+                        { "tile_id": data.tile_id },
+                        {
+                            $set: {
+                                'theta': data.theta
+                            }
+                        }, function (err) {
+                            if (err) {
+                                console.log("Error: Unable to update database for tile_id " + data.tile_id);
+                                throw err;
+                            } else {
+                                // Send it to all other clients
+                                socket.broadcast.emit('broadcast', data);
+                            }
+                        });
+                    break;
+
                 // ------------------------------
-                // Delete operation implementation
-                console.log("Received: 'broadcast' => delete tile_id " + data.tile_id);
+                case 'c': // create new tile
+                    console.log("Received: 'broadcast' => create tile_id " + data.tile_id + " at " 
+                        + data.location.x + " " + data.location.y + " with theta " + data.theta 
+                        + " etc...");
 
-                db.collection(process.env.MONGODB_COLLECTION).deleteOne(
-                    {'tile_id': data.tile_id},
-                    function(err) {
-                        if(err) {
-                            console.log("Error: Failed to delete tile_id " + data.tile_id + " from database.");
-                            throw err;
-                        } else {
-                            // rebroadcast to all other clients
-                            socket.broadcast.emit('broadcast', data);
-                        }
-                    });
+                    db.collection(process.env.MONGODB_COLLECTION).insertOne(
+                        {
+                            'tile_id': data.tile_id, 
+                            'location': { 'x': data.location.x, 'y': data.location.y }, 
+                            'dimensions': { 'x': data.dimensions.x, 'y': data.dimensions.y }, 
+                            'theta': data.theta, 'color': data.color, 
+                            'userRef': data.userRef, 'userLabel': data.userLabel
+                        },
+                        function (err) {
+                            if (err) {
+                                console.log("Error: Unable to insert new tile in database for tile_id " 
+                                    + data.tile_id);
+                                throw err;
+                            } else {
+                                // Send it to all other clients
+                                socket.broadcast.emit('broadcast', data);
+                            }
+                        });
+                    break;
 
-            } else if(data.op == 'r') {
                 // ------------------------------
-                // Read operation implementation
-                console.log("Received: 'broadcast' => read tile_id " + data.tile_id);
+                case 'd': // delete tile
+                    console.log("Received: 'broadcast' => delete tile_id " + data.tile_id);
 
-                db.collection(process.env.MONGODB_COLLECTION).findOne(
-                    {'tile_id': data.tile_id},
-                    function(err, doc) {
-                        if(err) {
-                            console.log("Error: Read op failed to find tile_id " + data.tile_id + " in database.");
-                            throw err;
-                        } else {
-                            var update = {
-                                op: 'u',
-                                tile_id: data.tile_id,
-                                x: data.x,
-                                y: data.y,
-                                dimx: data.dimx,
-                                dimy: data.dimy,
-                                theta: data.theta,
-                                color: data.color,
-                                userRef: data.userRef,
-                                userLabel: data.userLabel
-                            };
+                    db.collection(process.env.MONGODB_COLLECTION).deleteOne(
+                        { 'tile_id': data.tile_id },
+                        function (err) {
+                            if (err) {
+                                console.log("Error: Failed to delete tile_id " + data.tile_id + " from database.");
+                                throw err;
+                            } else {
+                                // rebroadcast to all other clients
+                                socket.broadcast.emit('broadcast', data);
+                            }
+                        });
+                    break;
 
-                            socket.emit('broadcast', update);
-                        }
-                    });
+                // ------------------------------
+                case 'r': // read tile data
+                    console.log("Received: 'broadcast' => read tile_id " + data.tile_id);
+
+                    db.collection(process.env.MONGODB_COLLECTION).findOne(
+                        { 'tile_id': data.tile_id },
+                        function (err, doc) {
+                            if (err) {
+                                console.log("Error: Read op failed to find tile_id " + data.tile_id + " in database.");
+                                throw err;
+                            } else {
+                                var update = {
+                                    op: 'u',
+                                    tile_id: data.tile_id,
+                                    x: data.x,
+                                    y: data.y,
+                                    dimx: data.dimx,
+                                    dimy: data.dimy,
+                                    theta: data.theta,
+                                    color: data.color,
+                                    userRef: data.userRef,
+                                    userLabel: data.userLabel
+                                };
+
+                                socket.emit('broadcast', update);
+                            }
+                        });
+                    break;
+
+                // ------------------------------
+                default:
+                    // @TODO - Perhaps I should throw an error here since this should never happen.
             }
         });
 
