@@ -1,14 +1,11 @@
 // ===============================================
 // Global variables
 var socket;
-
-// The following items had to be moved up here simply so that scale_factor would be global and thus 
-// it would be available in all the functions.
-var image_size_pixels = {'x': 3024, 'y': 2160};
-var console_size_phys = {'x':300000 /* mm */};
-var aspect_ratio = image_size_pixels.y/image_size_pixels.x;
-console_size_phys.y = aspect_ratio*console_size_phys.x;
-var scale_factor = console_size_phys.x/image_size_pixels.x /* mm/pixel */;
+var scale_factor = 121.6 /* mm/pixel */;
+// scale_factor is specific to the image loaded in index.html.  Change the image and you must compute a 
+// new scale factor.  
+// 
+// @TODO - Compute scale factor from Google Earth API
 
 // Keeps track of the tile_id on which mousedown() was last triggered.  Effectively this is our
 // selected tile.
