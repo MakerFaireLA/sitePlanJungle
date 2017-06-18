@@ -42,23 +42,23 @@ function nudgeTile(tile_id, direction) {
     switch(direction) {
         case 'up':
             tile = retrieveTileLocationFromHTML(tile_id);
-            $('#id-' + tile_id).css('top', tile.screen.y-1);
-            tile.screen.y -= 1;
+            $('#id-' + tile_id).css('top', tile.screenloc.y-1);
+            tile.screenloc.y -= 1;
             break;
         case 'down':
             tile = retrieveTileLocationFromHTML(tile_id);
-            $('#id-' + tile_id).css('top', tile.screen.y+1);
-            tile.screen.y += 1;
+            $('#id-' + tile_id).css('top', tile.screenloc.y+1);
+            tile.screenloc.y += 1;
             break;
         case 'left':
             tile = retrieveTileLocationFromHTML(tile_id);
-            $('#id-' + tile_id).css('left', tile.screen.x-1);
-            tile.screen.x -= 1;
+            $('#id-' + tile_id).css('left', tile.screenloc.x-1);
+            tile.screenloc.x -= 1;
             break;
         case 'right':
             tile = retrieveTileLocationFromHTML(tile_id);
-            $('#id-' + tile_id).css('left', tile.screen.x+1);
-            tile.screen.x += 1;
+            $('#id-' + tile_id).css('left', tile.screenloc.x+1);
+            tile.screenloc.x += 1;
             break;
         case 'ccw':
             tile = retrieveTileAngleFromHTML(tile_id);
@@ -80,9 +80,9 @@ function nudgeTile(tile_id, direction) {
 function retrieveTileLocationViaEvent(event) {
     var tile = {};
     tile.tile_id = parseInt(event.target.id.replace(/[^\d]/g, ''), 10);
-    tile.screen = {};
-    tile.screen.x = parseInt($('#' + event.target.id).css('left'), 10);
-    tile.screen.y = parseInt($('#' + event.target.id).css('top'), 10);
+    tile.screenloc = {};
+    tile.screenloc.x = parseInt($('#' + event.target.id).css('left'), 10);
+    tile.screenloc.y = parseInt($('#' + event.target.id).css('top'), 10);
     // Do not pull any data from the div that wasn't changed by the event!  Thus no angles, 
     // and nothing else either.  The following line was used to extract the angle.  We may 
     // add angle adjustment to the GUI, in which case we may need this line again (and it was
@@ -99,12 +99,12 @@ function retrieveTileLocationViaEvent(event) {
 // it.
 function extractTileDataFromHTML(tile_id) {
     var tile = {'tile_id':tile_id};
-    tile.screen = {};
-    tile.screen.x = parseInt($('#id-' + tile_id).css('left'), 10);
-    tile.screen.y = parseInt($('#id-' + tile_id).css('top'), 10);
+    tile.screenloc = {};
+    tile.screenloc.x = parseInt($('#id-' + tile_id).css('left'), 10);
+    tile.screenloc.y = parseInt($('#id-' + tile_id).css('top'), 10);
     tile.location = {};
-    tile.location.x = Math.round(tile.screen.x*scale_factor);
-    tile.location.y = Math.round(tile.screen.y*scale_factor);
+    tile.location.x = Math.round(tile.screenloc.x*scale_factor);
+    tile.location.y = Math.round(tile.screenloc.y*scale_factor);
     tile.screendim = {};
     tile.screendim.x = parseInt($('#id-' + tile_id).css('width'), 10);
     tile.screendim.y = parseInt($('#id-' + tile_id).css('height'), 10);
@@ -126,9 +126,9 @@ function extractTileDataFromHTML(tile_id) {
 // and the new location.
 function retrieveTileLocationFromHTML(tile_id) {
     var tile = {'tile_id':tile_id};
-    tile.screen = {};
-    tile.screen.x = parseInt($('#id-' + tile_id).css('left'), 10);
-    tile.screen.y = parseInt($('#id-' + tile_id).css('top'), 10);
+    tile.screenloc = {};
+    tile.screenloc.x = parseInt($('#id-' + tile_id).css('left'), 10);
+    tile.screenloc.y = parseInt($('#id-' + tile_id).css('top'), 10);
     return tile;
 }
 

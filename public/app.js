@@ -52,7 +52,7 @@ window.onload = function() {
     // ------------------------------------
     // Install callback responsible for handling dropping of tiles
     $(document).mouseup(function(event) {
-        reportTileLocationToServer(retrieveTileLocationViaEvent(event));
+        reportTileLocFromScreenToServer(retrieveTileLocationViaEvent(event));
         $('.moveTile').removeClass('moveTile');
     });
 
@@ -60,19 +60,19 @@ window.onload = function() {
     // Install keyboard listeners to handle tile nudging commands
     Mousetrap.bind('ctrl+w', function() {
         var tile = nudgeTile(lastClickedId, 'up');
-        reportTileLocationToServer(tile);
+        reportTileLocFromScreenToServer(tile);
     });
     Mousetrap.bind('ctrl+s', function() {
         var tile = nudgeTile(lastClickedId, 'down');
-        reportTileLocationToServer(tile);
+        reportTileLocFromScreenToServer(tile);
     });
     Mousetrap.bind('ctrl+a', function() {
         var tile = nudgeTile(lastClickedId, 'left');
-        reportTileLocationToServer(tile);
+        reportTileLocFromScreenToServer(tile);
     }); 
     Mousetrap.bind('ctrl+d', function() {
         var tile = nudgeTile(lastClickedId, 'right');
-        reportTileLocationToServer(tile);
+        reportTileLocFromScreenToServer(tile);
     });  
     Mousetrap.bind('ctrl+q', function() {
         var tile = nudgeTile(lastClickedId, 'ccw'); // counter-clockwise
@@ -146,10 +146,10 @@ function reportTileCreationToServer(tile) {
 }
 
 // ===============================================
-// Send updated tile position through the socket back to the server
-function reportTileLocationToServer(tile) {
-    var new_x = Math.round(tile.screen.x*scale_factor);
-    var new_y = Math.round(tile.screen.y*scale_factor);
+// Send updated tile position back to the server
+function reportTileLocFromScreenToServer(tile) {
+    var new_x = Math.round(tile.screenloc.x*scale_factor);
+    var new_y = Math.round(tile.screenloc.y*scale_factor);
 
     console.log("Sending 'broadcast': update tile_id " + tile.tile_id + " at " + new_x + " " + new_y);
 
