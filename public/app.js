@@ -111,6 +111,16 @@ window.onload = function() {
 
             renderTile(data);
 
+            var compensate = 1.227;
+            data.location.x = Math.round(data.location.x*compensate);
+            data.location.y = Math.round(data.location.y*compensate);
+            data.screenloc = {};
+            data.screenloc.x = Math.round(data.location.x/scale_factor);
+            data.screenloc.y = Math.round(data.location.y/scale_factor);
+            moveTile(data);
+            data.op = 'l';
+            reportTileLocationToServer(data);
+
         } else if(data.op == 'r') {
             // ------------------------------
             // Read operation implementation
@@ -148,8 +158,11 @@ function reportTileCreationToServer(tile) {
 // ===============================================
 // Send updated tile position through the socket back to the server
 function reportTileLocationToServer(tile) {
-    var new_x = Math.round(tile.screen.x*scale_factor);
-    var new_y = Math.round(tile.screen.y*scale_factor);
+    // var new_x = Math.round(tile.screen.x*scale_factor);
+    // var new_y = Math.round(tile.screen.y*scale_factor);
+
+    var new_x = tile.location.x;
+    var new_y = tile.location.y;
 
     console.log("Sending 'broadcast': update tile_id " + tile.tile_id + " at " + new_x + " " + new_y);
 
