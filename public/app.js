@@ -90,45 +90,49 @@ window.onload = function() {
         if (!('op' in data)) {
             console.log("Error: 'broadcast' => data received with unspecified operation (no op found).");
             // @TODO - Should probably throw an error here if the op param is not found in data.
-            // @TODO - Need to check that value of 'op' is 'c', 'r', 'u' or 'd' and if not, throw an error.
-            //     Or perhaps I should just use a switch statement and have the default throw an error.
+            return;
+        }
 
-        } else if(data.op == 'u') {
+        switch(data.op) {
             // ------------------------------
-            // Update operation implementation
-            console.log("Received: 'broadcast' => update tile_id " + data.tile_id + " to " + data.x + " " + data.y 
-                + " with theta " + data.theta + " etc...");
+            case 'u': // tile data update
+                console.log("Received: 'broadcast' => update tile_id " + data.tile_id + " to " + data.x + " " + data.y
+                    + " with theta " + data.theta + " etc...");
 
-            // @TODO - Implement an update operation here.  Using renderTile() is incorrect.  We could call moveTile
-            //   except that it does not handle changes in theta.
-            // renderTile(data);
+                // @TODO - Implement an update operation here.  Using renderTile() is incorrect.  We could call moveTile
+                //   except that it does not handle changes in theta.
+                // renderTile(data);
+                break;
 
-        } else if(data.op == 'c') {
             // ------------------------------
-            // Create operation implementation
-            console.log("Received: 'broadcast' => create (op = 'c') tile_id " + data.tile_id + " at " + data.location.x 
-                + " " + data.location.y + " with theta " + data.theta + " etc...");
+            case 'c': // create new tile
+                console.log("Received: 'broadcast' => create (op = 'c') tile_id " + data.tile_id + " at " + data.location.x 
+                    + " " + data.location.y + " with theta " + data.theta + " etc...");
 
-            renderTile(data);
+                renderTile(data);
+                break;
 
-        } else if(data.op == 'r') {
             // ------------------------------
-            // Read operation implementation
-            //   Querying clients for tile locations is stupid.
-            console.log("Error: 'broadcast' => client queried for tile location.");
+            case 'r': // read tile data
+                //   Querying clients for tile locations is stupid.
+                console.log("Error: 'broadcast' => client queried for tile location.");
 
-            // do nothing
+                // do nothing
+                break;
 
-        } else if(data.op == 'd') {
             // ------------------------------
-            // Delete operation implementation
-            console.log("Received: 'broadcast' => delete (op = 'd') tile_id " + data.tile_id);
+            case 'd': // delete tile
+                console.log("Received: 'broadcast' => delete (op = 'd') tile_id " + data.tile_id);
 
-            // @TODO - reimplement delete operation.
-            // tiles[data.tile_id][0].remove();
-            // delete tiles[data.tile_id];
-
-        } // @TODO - else throw error
+                // @TODO - reimplement delete operation.
+                // tiles[data.tile_id][0].remove();
+                // delete tiles[data.tile_id];
+                break;
+            
+            // ------------------------------
+            default: 
+                // @TODO - Perhaps I should throw an error here since this should never happen.
+        }
     });
 }
 
